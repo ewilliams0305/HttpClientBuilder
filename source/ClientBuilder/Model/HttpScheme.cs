@@ -23,12 +23,12 @@ namespace ClientBuilder.Model
             ? "https"
             : "http";
 
-        public static UriBuilder ToUriBuilder(this SchemeValue scheme, string host) =>
+        public static UriBuilder ToUriBuilder(this SchemeValue scheme, string host, int? port) =>
             new UriBuilder
             {
                 Host = host,
                 Scheme = scheme,
-                Port = scheme.ToPort()
+                Port = port?? scheme.ToPort()
             };
     }
 
