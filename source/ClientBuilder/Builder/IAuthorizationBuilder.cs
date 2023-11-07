@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace ClientBuilder
@@ -28,6 +29,6 @@ namespace ClientBuilder
 
     public interface IAuthorizationFunction
     {
-        IOptionsBuilder ConfigureAuthorization(Func<HttpRequestHeader> headerFunc);
+        IOptionsBuilder ConfigureAuthorization(Func<KeyValuePair<string, string>?> headerFunc);
     }
 }

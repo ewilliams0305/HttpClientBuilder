@@ -20,7 +20,7 @@ namespace ClientBuilder
 
     public interface ICustomerHandler
     {
-        IHeaderOrBuilder ConfigureHandler(Func<HttpClientHandler>? handler = null);
+        IHeaderOrBuilder ConfigureHandler(Func<HttpClientHandler> handlerFunc);
     }
 
     

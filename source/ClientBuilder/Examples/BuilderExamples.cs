@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using ClientBuilder.Model;
 
 namespace ClientBuilder.Examples
 {
@@ -14,7 +9,7 @@ namespace ClientBuilder.Examples
         {
             var client = ClientBuilder.CreateBuilder()
                 .ConfigureHost("172.26.6.104")
-                .ConfigureAuthorization(() => new HttpRequestHeader())
+                .ConfigureAuthorization(() => new KeyValuePair<string, string>("", ""))
                 .ConfigureHandler(()=> new HttpClientHandler())
                 .WithHeader("", "")
                 .CreateClient();

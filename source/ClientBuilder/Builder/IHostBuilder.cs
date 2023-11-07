@@ -5,6 +5,6 @@ namespace ClientBuilder
 {
     public interface IHostBuilder
     {
-        IAuthorizationBuilder ConfigureHost(string host, HttpScheme scheme = HttpScheme.Https, int port = 443);
+        IAuthorizationBuilder ConfigureHost(string host, SchemeType scheme = SchemeType.Https, int? port = null);
     }
 }

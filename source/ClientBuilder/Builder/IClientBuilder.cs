@@ -5,9 +5,8 @@ namespace ClientBuilder
 {
     public interface IClientBuilder
     {
-        IHttpClient CreateClient();
+        IHttpClient CreateClient(Action<HttpClient>? clientAction = null);
         IHttpClient CreateClient(HttpClient client);
-        IHttpClient CreateClient(Action<HttpClient> clientAction);
         IHttpClient CreateClient(Func<HttpClient> clientFactory);
         
     }
