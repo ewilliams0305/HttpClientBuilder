@@ -1,13 +1,11 @@
-using System;
-
-namespace ClientBuilder.Model
+namespace HttpClientBuilder.Model
 {
     /// <summary>
     /// The HttpScheme struct provide strongly typed data around the scheme used by an Http Client.
     /// The http scheme can only ever be Http or Https.
     /// The http scheme is used internally by the client builder when constructing URIs <seealso cref="IClientBuilder"/>
     /// </summary>
-    public readonly ref struct HttpScheme
+    internal readonly ref struct HttpScheme
     {
         /// <summary>
         /// True when the scheme was created as Https

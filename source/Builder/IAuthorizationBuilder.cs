@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 
-namespace ClientBuilder
+namespace HttpClientBuilder
 {
     public interface IAuthorizationBuilder : 
         IBasicAuthBuilder, 
         IBearerTokenAuthBuilder, 
         IApiKeyHeader,
-        IAuthorizationFunction
+        IAuthorizationFunction,
+        IClientBuilder
     {
     }
 

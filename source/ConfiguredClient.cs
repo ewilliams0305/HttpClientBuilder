@@ -1,6 +1,8 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
-namespace ClientBuilder
+namespace HttpClientBuilder
 {
     internal sealed class ConfiguredClient : IHttpClient
     {
@@ -10,6 +12,20 @@ namespace ClientBuilder
         {
             _client = client;
         }
+
+
+        #region Implementation of IHttpClient
+
+        /// <inheritdoc />
+        public Uri BaseAddress => _client.BaseAddress;
+
+        /// <inheritdoc />
+        public AuthenticationHeaderValue AuthenticationHeader => _client.DefaultRequestHeaders.Authorization;
+
+        /// <inheritdoc />
+        public HttpRequestHeaders RequestHeaders => _client.DefaultRequestHeaders;
+
+        #endregion
 
         #region IDisposable
 

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using ClientBuilder.Model;
+using HttpClientBuilder.Model;
 
-namespace ClientBuilder
+namespace HttpClientBuilder
 {
     /// <summary>
     /// The client builder performs the actions required to configure and build a new <seealso cref="IHttpClient"/>
@@ -16,7 +15,7 @@ namespace ClientBuilder
     /// While the resulting <seealso cref="IHttpClient"/> is just a wrapper around the HttpClient it's augmented with an expressive API
     /// allowing consumers to configure the client for operations against specific APIs.
     /// </summary>
-    public sealed class ClientBuilder : IHostBuilder, IAuthorizationBuilder, IOptionsBuilder, IHeaderOrBuilder
+    public sealed class ClientBuilder : IHostBuilder, IRouteBuilder, IOptionsBuilder, IHeaderOrBuilder
     {
 
         private readonly BuilderConfiguration _builderConfiguration;
@@ -38,14 +37,21 @@ namespace ClientBuilder
         /// <returns>A reference to the client builder as an IHostBuilder</returns>
         public static IHostBuilder CreateBuilder() => new ClientBuilder();
 
-        #region Authorization
+        #region URI And Authorization
 
         /// <inheritdoc />
-        public IAuthorizationBuilder ConfigureHost(string host, SchemeType scheme = SchemeType.Https, int? port = null)
+        public IRouteBuilder ConfigureHost(string host, SchemeType scheme = SchemeType.Https, int? port = null)
         {
             _builderConfiguration.Host = host;
             _builderConfiguration.Port = port;
             _builderConfiguration.Scheme = scheme;
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IAuthorizationBuilder WithBaseRoute(string route)
+        {
+            _builderConfiguration.BasePath = route;
             return this;
         }
 
@@ -132,7 +138,7 @@ namespace ClientBuilder
         public IHttpClient CreateClient(HttpClient client)
         {
             var scheme = HttpScheme.CreateScheme(_builderConfiguration.Scheme);
-            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.Port);
+            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host,_builderConfiguration.BasePath, _builderConfiguration.Port);
 
             client.BaseAddress = uriBuilder.Uri;
 
@@ -153,7 +159,7 @@ namespace ClientBuilder
         public IHttpClient CreateClient(Action<HttpClient>? clientAction = null)
         {
             var scheme = HttpScheme.CreateScheme(_builderConfiguration.Scheme);
-            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.Port);
+            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.BasePath, _builderConfiguration.Port);
 
             var client = _builderConfiguration.Handler != null
                 ? new HttpClient(_builderConfiguration.Handler)
@@ -184,7 +190,7 @@ namespace ClientBuilder
         {
             var client = (clientFactory?.Invoke()) ?? throw new HttpClientBuilderException(nameof(CreateClient));
             var scheme = HttpScheme.CreateScheme(_builderConfiguration.Scheme);
-            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.Port);
+            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.BasePath, _builderConfiguration.Port);
             client.BaseAddress = uriBuilder.Uri;
 
             if (_builderConfiguration.Authentication != null)
@@ -202,5 +208,6 @@ namespace ClientBuilder
 
         #endregion
 
+        
     }
 }

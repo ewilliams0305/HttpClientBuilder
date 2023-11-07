@@ -1,4 +1,4 @@
-namespace ClientBuilder.Model
+namespace HttpClientBuilder.Model
 {
     /// <summary>
     /// The type of scheme used by the <seealso cref="IClientBuilder"/>
