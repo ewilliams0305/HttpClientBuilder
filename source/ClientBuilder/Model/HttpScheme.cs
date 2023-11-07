@@ -22,5 +22,15 @@ namespace ClientBuilder.Model
             scheme == HttpScheme.Https
             ? "https"
             : "http";
+
+        public static UriBuilder ToUriBuilder(this SchemeValue scheme, string host) =>
+            new UriBuilder
+            {
+                Host = host,
+                Scheme = scheme,
+                Port = scheme.ToPort()
+            };
     }
+
+    
 }
