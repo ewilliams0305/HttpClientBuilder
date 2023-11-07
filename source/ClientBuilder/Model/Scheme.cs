@@ -1,16 +1,16 @@
-﻿namespace ClientBuilder.Model
+namespace ClientBuilder.Model
 {
     public readonly ref struct SchemeValue
     {
-        public string HttpScheme { get; }
+        public static HttpScheme Http => new("http");
+        public static HttpScheme Https => new("https");
+
+        private string _httpScheme { get; }
 
         private SchemeValue(string scheme)
         {
-            HttpScheme = scheme;
+            _httpScheme = scheme;
         }
-
-        public static SchemeValue Http() => new("http");
-        public static SchemeValue Https() => new("https");
 
         public static implicit operator string(SchemeValue scheme) => scheme.HttpScheme;
 
