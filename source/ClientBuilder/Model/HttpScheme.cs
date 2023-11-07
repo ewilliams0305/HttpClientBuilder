@@ -17,5 +17,10 @@ namespace ClientBuilder.Model
             scheme == HttpScheme.Https
             ? 443
             : 80;
+        
+        public static string ToSchemeString(this HttpScheme scheme) =>
+            scheme == HttpScheme.Https
+            ? "https"
+            : "http";
     }
 }
