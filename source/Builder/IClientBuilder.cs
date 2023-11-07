@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace ClientBuilder
+namespace HttpClientBuilder
 {
     public interface IClientBuilder
     {

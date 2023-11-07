@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-
-namespace ClientBuilder.Examples
+﻿namespace HttpClientBuilder.Examples
 {
     internal class BuilderExamples
     {

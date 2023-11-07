@@ -1,8 +1,8 @@
 using System;
 
-namespace ClientBuilder.Model
+namespace HttpClientBuilder.Model
 {
-    public static class SchemeExtensions
+    internal static class SchemeExtensions
     {
         public static int GetDefaultPort(this HttpScheme scheme)=>
             scheme.IsHttps ? 443 : 80;
@@ -12,12 +12,20 @@ namespace ClientBuilder.Model
                 ? "https"
                 : "http";
 
-        public static UriBuilder ToUriBuilder(this HttpScheme scheme, string host, int? port) =>
-            new()
-            {
-                Host = host,
-                Scheme = scheme,
-                Port = port?? scheme.GetDefaultPort()
-            };
+        public static UriBuilder ToUriBuilder(this HttpScheme scheme, string host, string? basePath = null, int? port = null) =>
+            basePath == null
+            ? new()
+                {
+                    Host = host,
+                    Scheme = scheme,
+                    Port = port?? scheme.GetDefaultPort()
+                }
+            : new()
+                {
+                    Path = basePath,
+                    Host = host,
+                    Scheme = scheme,
+                    Port = port ?? scheme.GetDefaultPort()
+                };
     }
 }
