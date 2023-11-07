@@ -12,5 +12,10 @@ namespace ClientBuilder.Model
             scheme == HttpScheme.Https
             ? Scheme.Https
             : Scheme.Http;
+
+        public static int GetDefaultPort(this HttpScheme scheme)=>
+            scheme == HttpScheme.Https
+            ? 443
+            : 80;
     }
 }
