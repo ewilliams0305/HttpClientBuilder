@@ -1,10 +1,13 @@
+using System;
+using System.Net;
+
 namespace HttpClientBuilder
 {
     public interface IResponseCode
     {
-        HttpResponseCode StatusCode { get; }
+        HttpStatusCode? StatusCode { get; }
     }
-    public interface IRequestResult<out TSuccessValue> : IResponse
+    public interface IRequestResult<out TSuccessValue> : IResponseCode
     {
 
         bool Success { get; }
