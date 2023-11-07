@@ -1,4 +1,6 @@
-﻿namespace HttpClientBuilder.Examples
+﻿using HttpClientBuilder.Model;
+
+namespace HttpClientBuilder.Examples
 {
     internal class BuilderExamples
     {
@@ -10,6 +12,12 @@
                 .AcceptSelfSignedCerts()
                 .WithHeader("x-api-key", "this is an extra header")
                 .CreateClient();
+
+            client.CreateRequest()
+                .Make()
+                .Get()
+                .MapResponse((code) => typeof(BuilderConfiguration))
+                .Request();
         }
     }
 }

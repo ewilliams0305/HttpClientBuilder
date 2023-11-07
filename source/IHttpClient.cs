@@ -1,5 +1,5 @@
-﻿using System;
-using System.Net.Http;
+﻿using HttpClientBuilder.Request;
+using System;
 using System.Net.Http.Headers;
 
 namespace HttpClientBuilder
@@ -11,5 +11,9 @@ namespace HttpClientBuilder
         AuthenticationHeaderValue AuthenticationHeader { get; }
 
         HttpRequestHeaders RequestHeaders { get; }
+
+        IRequestBuilder CreateRequest();
     }
+
+
 }

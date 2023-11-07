@@ -25,6 +25,12 @@ namespace HttpClientBuilder
         /// <inheritdoc />
         public HttpRequestHeaders RequestHeaders => _client.DefaultRequestHeaders;
 
+        /// <inheritdoc />
+        public IRequestBuilder CreateRequest()
+        {
+            return new RequestBuilder();
+        }
+
         #endregion
 
         #region IDisposable
