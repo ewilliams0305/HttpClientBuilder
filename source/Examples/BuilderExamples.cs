@@ -9,9 +9,9 @@ namespace ClientBuilder.Examples
         {
             var client = ClientBuilder.CreateBuilder()
                 .ConfigureHost("172.26.6.104")
-                .ConfigureAuthorization(() => new KeyValuePair<string, string>("", ""))
-                .ConfigureHandler(()=> new HttpClientHandler())
-                .WithHeader("", "")
+                .ConfigureBearerToken("JWT TOKEN HERE")
+                .AcceptSelfSignedCerts()
+                .WithHeader("x-api-key", "this is an extra header")
                 .CreateClient();
         }
     }
