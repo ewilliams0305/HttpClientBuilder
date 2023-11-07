@@ -1,23 +1,12 @@
-﻿using System;
+using System;
 
 namespace HttpClientBuilder.Result
 {
-    public interface IRequestResult<out TSuccessValue>
-    {
-        bool Success { get; }
-
-        TSuccessValue? Value { get; }
-        
-        Exception? Error { get; }
-    }
-
-    public interface IRequestResultWithError<out TSuccessValue, out TErrorValue> : IRequestResult<TSuccessValue>
-    {
-        TErrorValue? ErrorValue { get; }
-    }
-
+    
     public readonly struct RequestResult<TSuccessValue> : IRequestResult<TSuccessValue>
     {
+        public HttpStatusCode Status ode 
+
         #region Implementation of IRequestResult<out TSuccessValue>
 
         /// <inheritdoc />
