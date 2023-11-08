@@ -49,7 +49,7 @@ namespace HttpClientBuilder
         public static async Task<IRequestResult<TValue>> EnsureAsync<TValue>(
             this Task<IRequestResult<TValue>> response,
             Func<TValue, bool> predicate,
-            Func<TValue, Exception>? errorFactory = null)
+            Func<Exception>? errorFactory = null)
         {
             var resultFromTask = await response;
 
@@ -64,7 +64,7 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null 
-                ? new RequestResult<TValue>(errorFactory.Invoke(resultFromTask.Value!)) 
+                ? new RequestResult<TValue>(errorFactory.Invoke()) 
                 : new RequestResult<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing predicate value of response"));
         }
 
@@ -81,7 +81,7 @@ namespace HttpClientBuilder
         public static async Task<IRequestResult<TValue>> EnsureAsync<TValue>(
             this Task<IRequestResult<TValue>> response,
             Func<TValue, Task<bool>> predicateAsync,
-            Func<TValue, Exception>? errorFactory = null)
+            Func<Exception>? errorFactory = null)
         {
             var resultFromTask = await response;
 
@@ -96,7 +96,7 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null 
-                ? new RequestResult<TValue>(errorFactory.Invoke(resultFromTask.Value!)) 
+                ? new RequestResult<TValue>(errorFactory.Invoke()) 
                 : new RequestResult<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing predicate value of response"));
         }
         
