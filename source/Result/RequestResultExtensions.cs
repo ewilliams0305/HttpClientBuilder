@@ -31,4 +31,25 @@ namespace HttpClientBuilder
     }
    }
 
+    public static async Task<IResponseResult<TValue>> HandleAsync<TValue>(
+        this Task<IResponseResult<TValue>> response,
+        Func<HttpStatusCode, TValue, Task<bool>> predicate,
+        Func<TValue, Exception> error)
+    {
+        var resultFromTask = await result;
+
+        if (!resultFromTask.Success) return 
+            result.Exception!;
+
+        if (await predicate(resultFromTask.Value!))
+        {
+            return new IResponseResult<TValue>(resultFromTask.Value!);
+        }
+
+        return error(resultFromTask.Value!);
+    }
+   }
+
+
+
 }
