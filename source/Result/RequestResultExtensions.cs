@@ -2,7 +2,7 @@ namespace HttpClientBuilder
 {
    public static class ResponseResultExtensions
    {
-        /// <summary>
+    /// <summary>
     /// Checks the result and ensures its a successful result before invoking a predicate.
     /// If the predicate returns true, a new successful result is returned.
     /// If the predicate fails, a default error is returned.
@@ -29,27 +29,22 @@ namespace HttpClientBuilder
 
         return error(resultFromTask.Value!);
     }
-   }
 
     public static async Task<IResponseResult<TValue>> HandleAsync<TValue>(
         this Task<IResponseResult<TValue>> response,
-        Func<HttpStatusCode, TValue, Task<bool>> predicate,
-        Func<TValue, Exception> error)
+        Action<HttpStatusCode, TValue> value,
+        Action<Exception> error)
     {
-        var resultFromTask = await result;
+        var resultFromTask = await response;
 
-        if (!resultFromTask.Success) return 
-            result.Exception!;
-
-        if (await predicate(resultFromTask.Value!))
+        if (!resultFromTask.Success)  
         {
-            return new IResponseResult<TValue>(resultFromTask.Value!);
+            error?.Invoke(resultFromTask.Exception!);
+            return response;
         }
-
-        return error(resultFromTask.Value!);
+        
+        value?.Invoke(resultFromTask.Value!);
+        return response;
     }
-   }
-
-
-
+}
 }
