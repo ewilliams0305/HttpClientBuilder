@@ -22,15 +22,15 @@ namespace HttpClientBuilder
 
     public interface IHttpGetRequests
     {
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, CancellationToken cancellationToken = default);
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFunc, CancellationToken cancellationToken = default);
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFuncAsync, CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route = "/", CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default);
         
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFunc, CancellationToken cancellationToken = default);
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFuncAsync, CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default);
 
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFunc, CancellationToken cancellationToken = default);
-        Task<IRequestResult<TSuccessType>> GetAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFuncAsync, CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default);
+        Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default);
     }
 
 
