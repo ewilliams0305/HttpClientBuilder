@@ -53,6 +53,7 @@ namespace HttpClientBuilder
         public static implicit operator RequestResult<TSuccessValue>(TSuccessValue value) => new(HttpStatusCode.OK, value);
         public static implicit operator RequestResult<TSuccessValue>(Exception exception) => new(exception);
 
+
     }
     
     public readonly struct RequestWithErrorResult<TSuccessValue, TErrorValue> : IRequestResultWithError<TSuccessValue, TErrorValue>

@@ -8,11 +8,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EA4836D9-5024-4EC7-9EC2-0CFC76CD09C0}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
+		..\tests\TESTING.md = ..\tests\TESTING.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientBuilder.UnitTests", "..\tests\HttpClientBuilder.UnitTests\HttpClientBuilder.UnitTests.csproj", "{D2450A8B-0D6A-4E57-B482-897A24285664}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClientBuilder.IntegrationTests", "..\tests\HttpClientBuilder.IntegrationTests\HttpClientBuilder.IntegrationTests.csproj", "{F4024F4B-BE2A-40E7-9C43-D6E58EBB59F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientBuilder.IntegrationTests", "..\tests\HttpClientBuilder.IntegrationTests\HttpClientBuilder.IntegrationTests.csproj", "{F4024F4B-BE2A-40E7-9C43-D6E58EBB59F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpClientBuilder.Server", "..\tests\HttpClientBuilder.Server\HttpClientBuilder.Server.csproj", "{620790B5-D2A1-4C2A-86DC-97D196080986}"
 EndProject

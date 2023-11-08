@@ -152,7 +152,7 @@ namespace HttpClientBuilder
                 client.DefaultRequestHeaders.Add(header.Key, new[] { header.Value });
             }
 
-            return new ConfiguredClient(client);
+            return new HttpBuilderClient(client);
         }
 
         /// <inheritdoc />
@@ -182,7 +182,7 @@ namespace HttpClientBuilder
             }
 
             clientAction?.Invoke(client);
-            return new ConfiguredClient(client);
+            return new HttpBuilderClient(client);
         }
 
         /// <inheritdoc />
@@ -203,7 +203,7 @@ namespace HttpClientBuilder
                 client.DefaultRequestHeaders.Add(header.Key, new[] { header.Value });
             }
 
-            return new ConfiguredClient(client);
+            return new HttpBuilderClient(client);
         }
 
         #endregion
