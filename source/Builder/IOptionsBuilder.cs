@@ -3,25 +3,16 @@ using System.Net.Http;
 
 namespace HttpClientBuilder
 {
+    /// <summary>
+    /// Advances the pipeline to the optional phase of the <seealso cref="ClientBuilder"/> build.
+    /// The optional phase includes additional headers and http handlers.
+    /// </summary>
     public interface IOptionsBuilder: IHandlerBuilder, IHttpHeaderBuilder, IClientBuilder
     {
         
     }
 
-    public interface IHandlerBuilder : ICustomerHandler, IAcceptAllCerts
-    {
-        
-    }
-
-    public interface IAcceptAllCerts
-    {
-        IHeaderOrBuilder AcceptSelfSignedCerts();
-    }
-
-    public interface ICustomerHandler
-    {
-        IHeaderOrBuilder ConfigureHandler(Func<HttpClientHandler> handlerFunc);
-    }
+    
 
     
 }

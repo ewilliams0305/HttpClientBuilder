@@ -4,7 +4,10 @@ using System.Threading.Tasks;
 
 namespace HttpClientBuilder
 {
-    public static class ResponseResultExtensions
+    /// <summary>
+    /// Extension methods used to process the results of a http request <seealso cref="IRequestResult{TSuccessValue}"/>
+    /// </summary>
+    public static class RequestResultExtensions
     {
         /// <summary>
         /// Checks the result and ensures its a successful result before invoking a predicate.
@@ -19,7 +22,7 @@ namespace HttpClientBuilder
         public static IRequestResult<TValue> Ensure<TValue>(
             this IRequestResult<TValue> response,
             Func<TValue, bool> predicate,
-            Func<Exception>? errorFactory = null)
+            Func<Exception>? errorFactory = null) where TValue : class
         {
             if (!response.Success)
             {
@@ -49,7 +52,7 @@ namespace HttpClientBuilder
         public static async Task<IRequestResult<TValue>> EnsureAsync<TValue>(
             this Task<IRequestResult<TValue>> response,
             Func<TValue, bool> predicate,
-            Func<Exception>? errorFactory = null)
+            Func<Exception>? errorFactory = null) where TValue : class
         {
             var resultFromTask = await response;
 
@@ -81,7 +84,7 @@ namespace HttpClientBuilder
         public static async Task<IRequestResult<TValue>> EnsureAsync<TValue>(
             this Task<IRequestResult<TValue>> response,
             Func<TValue, Task<bool>> predicateAsync,
-            Func<Exception>? errorFactory = null)
+            Func<Exception>? errorFactory = null) where TValue : class
         {
             var resultFromTask = await response;
 
@@ -115,7 +118,7 @@ namespace HttpClientBuilder
         public static IRequestResult<TValue> Handle<TValue>(
             this IRequestResult<TValue> response,
             Action<HttpStatusCode, TValue> value,
-            Action<Exception> error)
+            Action<Exception> error) where TValue : class
         {
             if (!response.Success)
             {
@@ -141,7 +144,7 @@ namespace HttpClientBuilder
         public static async Task<IRequestResult<TValue>> HandleAsync<TValue>(
             this Task<IRequestResult<TValue>> response,
             Action<HttpStatusCode, TValue> value,
-            Action<Exception> error)
+            Action<Exception> error) where TValue : class
         {
             var resultFromTask = await response;
 

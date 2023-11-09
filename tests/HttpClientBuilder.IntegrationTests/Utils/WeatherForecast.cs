@@ -1,4 +1,8 @@
-﻿namespace HttpClientBuilder.IntegrationTests.Utils;
+﻿using System.Text.Json.Serialization;
+
+#pragma warning disable CS8618
+
+namespace HttpClientBuilder.IntegrationTests.Utils;
 
 public class WeatherForecast
 {
@@ -10,4 +14,14 @@ public class WeatherForecast
     {
             
     }
+}
+
+[JsonSerializable(typeof(WeatherForecast), GenerationMode = JsonSourceGenerationMode.Default)]
+internal partial class WeatherForecastContext : JsonSerializerContext
+{
+}
+
+[JsonSerializable(typeof(IEnumerable<WeatherForecast>), GenerationMode = JsonSourceGenerationMode.Default)]
+internal partial class WeatherListForecastContext : JsonSerializerContext
+{
 }

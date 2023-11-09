@@ -33,7 +33,7 @@ CreateClient is passed to the factory overriding the HTTP client created by the 
     public IHttpClient GetDefaultClient()
     {
         var client = ClientBuilder.CreateBuilder()
-            .ConfigureHost("127.0.0.1")
+            .WithHost("127.0.0.1")
             .CreateClient(CreateClient);
 
         return client;

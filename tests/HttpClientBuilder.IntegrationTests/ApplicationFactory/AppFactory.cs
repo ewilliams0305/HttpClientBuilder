@@ -1,13 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using HttpClientBuilder.Server;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using HttpClientBuilder.Server;
 
 
 namespace HttpClientBuilder.IntegrationTests.ApplicationFactory
@@ -18,8 +10,8 @@ namespace HttpClientBuilder.IntegrationTests.ApplicationFactory
         public IHttpClient GetDefaultClient()
         {
             var client = ClientBuilder.CreateBuilder()
-                .ConfigureHost("127.0.0.1")
-                .CreateClient(CreateClient);
+                .WithHost("127.0.0.1")
+                .BuildClient(CreateClient);
 
             return client;
         } 
@@ -27,18 +19,18 @@ namespace HttpClientBuilder.IntegrationTests.ApplicationFactory
         public IHttpClient GetBasicAuthClient(string user, string pass)
         {
             var client = ClientBuilder.CreateBuilder()
-                .ConfigureHost("127.0.0.1")
-                .ConfigureBasicAuthorization(user, pass)
-                .CreateClient(CreateClient);
+                .WithHost("127.0.0.1")
+                .WithBasicAuthorization(user, pass)
+                .BuildClient(CreateClient);
 
             return client;
         }
         public IHttpClient GetBearerTokenClient(string token)
         {
             var client = ClientBuilder.CreateBuilder()
-                .ConfigureHost("127.0.0.1")
-                .ConfigureBearerToken(token)
-                .CreateClient(CreateClient);
+                .WithHost("127.0.0.1")
+                .WithBearerToken(token)
+                .BuildClient(CreateClient);
 
             return client;
         } 

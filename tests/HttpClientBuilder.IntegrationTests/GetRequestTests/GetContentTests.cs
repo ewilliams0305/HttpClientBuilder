@@ -21,7 +21,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast> ("/");
+            var result = await Client.GetContentFromJsonAsync<Utils.WeatherForecast> ("/");
 
             // Assert
             result.Should().NotBeNull();
@@ -36,7 +36,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<IEnumerable<Utils.WeatherForecast>>("weatherForecast");
+            var result = await Client.GetContentFromJsonAsync<IEnumerable<Utils.WeatherForecast>>("weatherForecast");
 
             // Assert
             result.Should().NotBeNull();

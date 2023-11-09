@@ -34,13 +34,14 @@ namespace HttpClientBuilder
         /// The create builder factory returns a <seealso cref="IHostBuilder"/> directing the
         /// consumer to the next step, host and scheme configuration.
         /// </summary>
+        /// <exception cref="HttpClientBuilderException">The builder pipeline can throw a builder exception if the required parameters at any step are ignored.</exception>
         /// <returns>A reference to the client builder as an IHostBuilder</returns>
         public static IHostBuilder CreateBuilder() => new ClientBuilder();
 
         #region URI And Authorization
 
         /// <inheritdoc />
-        public IRouteBuilder ConfigureHost(string host, SchemeType scheme = SchemeType.Https, int? port = null)
+        public IRouteBuilder WithHost(string host, SchemeType scheme = SchemeType.Https, int? port = null)
         {
             _builderConfiguration.Host = host;
             _builderConfiguration.Port = port;
@@ -56,7 +57,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public IOptionsBuilder ConfigureBasicAuthorization(string username, string password)
+        public IOptionsBuilder WithBasicAuthorization(string username, string password)
         {
             var encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
             _builderConfiguration.Authentication = new AuthenticationHeaderValue("Basic", encoded);
@@ -64,23 +65,23 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public IOptionsBuilder ConfigureBearerToken(string token)
+        public IOptionsBuilder WithBearerToken(string token)
         {
             _builderConfiguration.Authentication = new AuthenticationHeaderValue("Bearer", token);
             return this;
         }
 
         /// <inheritdoc />
-        public IOptionsBuilder ConfigureApiKeyHeader(string apiKey, string header = "x-api-key")
+        public IOptionsBuilder WithApiKeyHeader(string apiKey, string header = "x-api-key")
         {
             _builderConfiguration.Headers.Add(header, apiKey);
             return this;
         }
 
         /// <inheritdoc />
-        public IOptionsBuilder ConfigureAuthorization(Func<KeyValuePair<string, string>?> headerFunc)
+        public IOptionsBuilder WithAuthorizationFactory(Func<KeyValuePair<string, string>?> headerFunc)
         {
-            var header = headerFunc?.Invoke() ?? throw new HttpClientBuilderException(nameof(ConfigureAuthorization));
+            var header = headerFunc?.Invoke() ?? throw new HttpClientBuilderException(nameof(WithAuthorizationFactory));
             _builderConfiguration.Headers.Add(header.Key, header.Value);
             return this;
         }
@@ -110,15 +111,15 @@ namespace HttpClientBuilder
         #region Custom Handlers
 
         /// <inheritdoc />
-        public IHeaderOrBuilder ConfigureHandler(Func<HttpClientHandler> handlerFunc)
+        public IHeaderOrBuilder WithHandlerFactory(Func<HttpClientHandler> handlerFunc)
         {
-            var handler = (handlerFunc?.Invoke()) ?? throw new HttpClientBuilderException(nameof(ConfigureHandler));
+            var handler = (handlerFunc?.Invoke()) ?? throw new HttpClientBuilderException(nameof(WithHandlerFactory));
             _builderConfiguration.Handler = handler;
             return this;
         }
 
         /// <inheritdoc />
-        public IHeaderOrBuilder AcceptSelfSignedCerts()
+        public IHeaderOrBuilder WithSelfSignedCerts()
         {
             _builderConfiguration.Handler = new HttpClientHandler()
             {
@@ -135,28 +136,7 @@ namespace HttpClientBuilder
         #region Implementation of IClientBuilder
 
         /// <inheritdoc />
-        public IHttpClient CreateClient(HttpClient client)
-        {
-            var scheme = HttpScheme.CreateScheme(_builderConfiguration.Scheme);
-            var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host,_builderConfiguration.BasePath, _builderConfiguration.Port);
-
-            client.BaseAddress = uriBuilder.Uri;
-
-            if (_builderConfiguration.Authentication != null)
-            {
-                client.DefaultRequestHeaders.Authorization = _builderConfiguration.Authentication;
-            }
-
-            foreach (var header in _builderConfiguration.Headers)
-            {
-                client.DefaultRequestHeaders.Add(header.Key, new[] { header.Value });
-            }
-
-            return new HttpBuilderClient(client);
-        }
-
-        /// <inheritdoc />
-        public IHttpClient CreateClient(Action<HttpClient>? clientAction = null)
+        public IHttpClient BuildClient(Action<HttpClient>? clientAction = null)
         {
             var scheme = HttpScheme.CreateScheme(_builderConfiguration.Scheme);
             var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.BasePath, _builderConfiguration.Port);
@@ -186,9 +166,9 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public IHttpClient CreateClient(Func<HttpClient> clientFactory)
+        public IHttpClient BuildClient(Func<HttpClient> clientFactory)
         {
-            var client = (clientFactory?.Invoke()) ?? throw new HttpClientBuilderException(nameof(CreateClient));
+            var client = (clientFactory?.Invoke()) ?? throw new HttpClientBuilderException(nameof(BuildClient));
             var scheme = HttpScheme.CreateScheme(_builderConfiguration.Scheme);
             var uriBuilder = scheme.ToUriBuilder(_builderConfiguration.Host, _builderConfiguration.BasePath, _builderConfiguration.Port);
             client.BaseAddress = uriBuilder.Uri;

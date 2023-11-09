@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using HttpClientBuilder.Model;
 
 namespace HttpClientBuilder.Examples
 {
@@ -9,15 +7,16 @@ namespace HttpClientBuilder.Examples
     {
         public async Task<bool> ExampleGetWeatherAndCheckIfItsNice()
         {
-            var client = ClientBuilder.CreateBuilder()
-                .ConfigureHost("172.26.6.104")
-                .ConfigureBearerToken("JWT TOKEN HERE")
-                .AcceptSelfSignedCerts()
+           var client = ClientBuilder.CreateBuilder()
+                .WithHost("172.26.6.104")
+                .WithBaseRoute("api/weather")
+                .WithBearerToken("JWT TOKEN HERE")
+                .WithSelfSignedCerts()
                 .WithHeader("x-api-key", "this is an extra header")
-                .CreateClient();
+                .BuildClient();
 
             var response = await client
-                .GetContentAsync<Weather>("weather")
+                .GetContentAsync<Weather>("forecast")
                 .EnsureAsync(
                     predicate: (weather) => weather.IsNice && weather.Temperature > 60,
                     errorFactory: () => new Exception("THE WEATHER IS NOT NICE"))

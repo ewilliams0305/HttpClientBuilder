@@ -12,12 +12,13 @@ Client builder is a configuration builder for HTTP request piplines.
 The client builder can be used to create http clients configured against API models using an expressive and fluent API.
 
 ```csharp
-IHttpClient client = ClientBuilder.CreateBuilder()
-    .ConfigureHost("172.26.6.104")
-    .ConfigureBearerToken("JWT TOKEN HERE")
-    .AcceptSelfSignedCerts()
+var client = ClientBuilder.CreateBuilder()
+    .WithHost("172.26.6.104")
+    .WithBaseRoute("api/weather")
+    .WithBearerToken("JWT TOKEN HERE")
+    .WithSelfSignedCerts()
     .WithHeader("x-api-key", "this is an extra header")
-    .CreateClient();
+    .BuildClient();
 
 public async Task<bool> ExampleGetWeatherAndCheckIfItsNice()
 {
@@ -59,19 +60,19 @@ The first step in the client builder pipline requires a host configuration.
 The `ConfigureHost` method requires an IPADRESS OR HOSTNAME as the first required parameter. 
 ```csharp
 IHttpClient client = ClientBuilder.CreateBuilder()
-    .ConfigureHost("172.26.6.104")
+    .WithHost("172.26.6.104")
     .CreateClient();
 ```
 You can optionally provide a `HttpScheme` of either https or http. If no scheme is provided the builder will default to *HTTPS*
 ```csharp
 IHttpClient client = ClientBuilder.CreateBuilder()
-    .ConfigureHost("172.26.6.104", scheme: HttpScheme.Http)
+    .WithHost("172.26.6.104", scheme: HttpScheme.Http)
     .CreateClient();
 ```
 An optional PORT can also be provided to specify a TCP port used by the HTTP or HTTPS server. 
 ```csharp
 IHttpClient client = ClientBuilder.CreateBuilder()
-    .ConfigureHost("172.26.6.104", scheme: HttpScheme.Http, port: 15672)
+    .WithHost("172.26.6.104", scheme: HttpScheme.Http, port: 15672)
     .CreateClient();
 ```
 After configuring a host the builder will proceed to either the `CreateClient()` or `Authorization` steps. 
@@ -85,8 +86,8 @@ To add a default authorization bearer token to the client, invoke the
 requests an *Authorization: Bearer Token...* header. 
 ```csharp
 IHttpClient client = ClientBuilder.CreateBuilder()
-    .ConfigureHost("172.26.6.104")
-    .ConfigureBearerToken("JWT TOKEN HERE")
+    .WithHost("172.26.6.104")
+    .WithBearerToken("JWT TOKEN HERE")
     .CreateClient();
 ```
 

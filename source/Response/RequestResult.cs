@@ -1,10 +1,65 @@
+#pragma warning disable CS1591
+
 using System;
 using System.Net;
 
 namespace HttpClientBuilder
 {
+    /// <summary>
+    /// The default implementation of the <seealso cref="IRequestResult"/>
+    /// </summary>
+    public readonly struct RequestResult: IRequestResult
+    {
+        #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public HttpStatusCode? StatusCode { get; }
+
+        #endregion
+
+        #region Implementation of IRequestResult
+
+        /// <inheritdoc />
+        public bool Success => Error == null;
+
+        /// <inheritdoc />
+        public Exception? Error { get; }
+
+        #endregion
+
+        /// <summary>
+        /// Creates a new successful result.
+        /// </summary>
+        /// <param name="code">Http Status Code</param>
+        public RequestResult(HttpStatusCode code)
+        {
+            StatusCode = code;
+            Error = null;
+        }
+
+        /// <summary>
+        /// Creates a new failed result.
+        /// </summary>
+        /// <param name="error">The reason the failure occurred.</param>
+        public RequestResult(Exception error)
+        {
+            StatusCode = null;
+            Error = error;
+        }
+
+        public static implicit operator Exception?(RequestResult result) => result.Error;
+        public static implicit operator HttpStatusCode?(RequestResult result) => result.StatusCode;
+
+        public static implicit operator RequestResult(Exception exception) => new (exception);
+        public static implicit operator RequestResult?(HttpStatusCode code) => new (code);
+
+    }
     
-    public readonly struct RequestResult<TSuccessValue> : IRequestResult<TSuccessValue>
+    /// <summary>
+    /// The default implementation of the <seealso cref="IRequestResult{TSuccessValue}"/>
+    /// </summary>
+    /// <typeparam name="TSuccessValue">Type of object stored in the response.</typeparam>
+    public readonly struct RequestResult<TSuccessValue> : IRequestResult<TSuccessValue> where TSuccessValue : class
     {
         #region Implementation of IResponseCode
 
@@ -26,19 +81,22 @@ namespace HttpClientBuilder
 
         #endregion
 
-        public RequestResult()
-        {
-            StatusCode = null;
-            Value = default;
-            Error = null;
-        }
-
+        /// <summary>
+        /// Creates a new successful result.
+        /// </summary>
+        /// <param name="code">Http Status Code</param>
+        /// <param name="value">Value Stored in the Result.</param>
         public RequestResult(HttpStatusCode code, TSuccessValue value)
         {
             StatusCode = code;
             Value = value;
             Error = null;
         }
+
+        /// <summary>
+        /// Creates a new failed result.
+        /// </summary>
+        /// <param name="error">The reason the failure occurred.</param>
         public RequestResult(Exception error)
         {
             StatusCode = null;
@@ -46,84 +104,12 @@ namespace HttpClientBuilder
             Error = error;
         }
 
+
         public static implicit operator bool(RequestResult<TSuccessValue> result) => result.Success;
         public static implicit operator TSuccessValue?(RequestResult<TSuccessValue> result) => result.Value;
         public static implicit operator Exception?(RequestResult<TSuccessValue> result) => result.Error;
 
         public static implicit operator RequestResult<TSuccessValue>(TSuccessValue value) => new(HttpStatusCode.OK, value);
         public static implicit operator RequestResult<TSuccessValue>(Exception exception) => new(exception);
-
-
-    }
-    
-    public readonly struct RequestWithErrorResult<TSuccessValue, TErrorValue> : IRequestResultWithError<TSuccessValue, TErrorValue>
-    {
-        #region Implementation of IResponseCode
-
-        /// <inheritdoc />
-        public HttpStatusCode? StatusCode { get; }
-
-        #endregion
-
-        #region Implementation of IRequestResult<out TSuccessValue>
-
-        /// <inheritdoc />
-        public bool Success => Value != null && Error == null;
-
-        /// <inheritdoc />
-        public TSuccessValue? Value { get; }
-
-        /// <inheritdoc />
-        public Exception? Error { get; }
-
-        #region Implementation of IRequestResultWithError<out TSuccessValue,out TErrorValue>
-
-        /// <inheritdoc />
-        public TErrorValue? ErrorValue { get; }
-
-        #endregion
-
-        #endregion
-
-        public RequestWithErrorResult()
-        {
-            StatusCode = null;
-            Value = default;
-            ErrorValue = default;
-            Error = null;
-        }
-
-        public RequestWithErrorResult(HttpStatusCode code, TSuccessValue value)
-        {
-            StatusCode = code;
-            Value = value;
-            ErrorValue = default;
-            Error = null;
-        }
-        
-        public RequestWithErrorResult(HttpStatusCode code, TErrorValue errorValue)
-        {
-            StatusCode = code;
-            Value = default;
-            ErrorValue = errorValue;
-            Error = null;
-        }
-
-        public RequestWithErrorResult(Exception error)
-        {
-            StatusCode = null;
-            Value = default;
-            ErrorValue = default;
-            Error = error;
-        }
-        
-        public static implicit operator bool(RequestWithErrorResult<TSuccessValue, TErrorValue> result) => result.Success;
-        public static implicit operator TSuccessValue?(RequestWithErrorResult<TSuccessValue, TErrorValue> result) => result.Value;
-        public static implicit operator TErrorValue?(RequestWithErrorResult<TSuccessValue, TErrorValue> result) => result.ErrorValue;
-        public static implicit operator Exception?(RequestWithErrorResult<TSuccessValue, TErrorValue> result) => result.Error;
-
-        public static implicit operator RequestWithErrorResult<TSuccessValue, TErrorValue>(TSuccessValue value) => new(HttpStatusCode.OK, value);
-        public static implicit operator RequestWithErrorResult<TSuccessValue, TErrorValue>(TErrorValue value) => new(HttpStatusCode.BadRequest, value);
-        public static implicit operator RequestWithErrorResult<TSuccessValue, TErrorValue>(Exception exception) => new(exception);
     }
 }

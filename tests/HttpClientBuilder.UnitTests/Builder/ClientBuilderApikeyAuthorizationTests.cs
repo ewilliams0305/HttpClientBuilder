@@ -14,9 +14,9 @@ public class ClientBuilderApikeyAuthorizationTests
         // Arrange
         var client = ClientBuilder
             .CreateBuilder()
-            .ConfigureHost("127.0.0.1")
-            .ConfigureApiKeyHeader(key)
-            .CreateClient();
+            .WithHost("127.0.0.1")
+            .WithApiKeyHeader(key)
+            .BuildClient();
 
         // Act
 

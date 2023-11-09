@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using HttpClientBuilder.Request;
@@ -38,20 +39,36 @@ namespace HttpClientBuilder
 
         #endregion
 
-        #region IDisposable
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            _client?.Dispose();
-        }
-
-        #endregion
 
         #region Implementation of IHttpGetRequests
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route = "/", CancellationToken cancellationToken = default)
+        public async Task<IRequestResult> GetAsync(string route = "/", CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var response = await _client.GetAsync(route, cancellationToken).ConfigureAwait(false);
+
+                return response.IsSuccessStatusCode
+                    ? new RequestResult(response.StatusCode)
+                    : new RequestResult(new HttpRequestResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new RequestResult(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new RequestResult(requestException);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <inheritdoc />
+        public async Task<IRequestResult<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "/", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -63,10 +80,15 @@ namespace HttpClientBuilder
                 }
 
                 var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                
-                var result = await JsonSerializer
-                    .DeserializeAsync<TSuccessType>(content, JsonSerializerOptions.Default, cancellationToken)
-                    .ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new RequestResult<TSuccessType>(new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                var result = context == null
+                    ? await DeserializeType<TSuccessType>(content, JsonSerializerOptions.Default, cancellationToken)
+                    : await DeserializeType<TSuccessType>(content, context, cancellationToken);
 
                 return result != null
                     ? new RequestResult<TSuccessType>(response.StatusCode, result!)
@@ -91,7 +113,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default)
+        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -126,7 +148,7 @@ namespace HttpClientBuilder
             }
         }
         
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default)
+        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -162,7 +184,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default)
+        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -204,7 +226,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default)
+        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -247,7 +269,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default)
+        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -290,7 +312,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default)
+        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             try
             {
@@ -333,5 +355,31 @@ namespace HttpClientBuilder
         }
 
         #endregion
+
+        #region PRIVATE JSON HELPERS
+
+        private async Task<TSuccessType?> DeserializeType<TSuccessType>(Stream content, JsonSerializerOptions options, CancellationToken cancellationToken) where TSuccessType : class =>
+            await JsonSerializer
+                .DeserializeAsync<TSuccessType>(content, options, cancellationToken)
+                .ConfigureAwait(false);
+
+        private async Task<TSuccessType?> DeserializeType<TSuccessType>(Stream content, JsonSerializerContext context, CancellationToken cancellationToken) where TSuccessType : class =>
+            await JsonSerializer
+                .DeserializeAsync(content, typeof(TSuccessType), context, cancellationToken)
+                .ConfigureAwait(false) as TSuccessType;
+
+        #endregion
+
+        #region IDisposable
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            _client?.Dispose();
+        }
+
+        #endregion
+
+
     }
 }

@@ -10,8 +10,8 @@ public class ClientBuilderNoAuthTests
         // Arrange
         var client = ClientBuilder
             .CreateBuilder()
-            .ConfigureHost("127.0.0.1")
-            .CreateClient();
+            .WithHost("127.0.0.1")
+            .BuildClient();
 
         // Act
 
