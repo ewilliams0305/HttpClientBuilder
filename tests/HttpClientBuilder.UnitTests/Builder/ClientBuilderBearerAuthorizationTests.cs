@@ -15,9 +15,9 @@ public class ClientBuilderBearerAuthorizationTests
         // Arrange
         var client = ClientBuilder
             .CreateBuilder()
-            .ConfigureHost("127.0.0.1")
-            .ConfigureBearerToken(token)
-            .CreateClient();
+            .WithHost("127.0.0.1")
+            .WithBearerToken(token)
+            .BuildClient();
 
         // Act
 

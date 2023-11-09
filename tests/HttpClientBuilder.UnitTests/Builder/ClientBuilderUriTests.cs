@@ -24,8 +24,8 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host)
-                .CreateClient();
+                .WithHost(host)
+                .BuildClient();
 
             // Act
 
@@ -45,8 +45,8 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, SchemeType.Https)
-                .CreateClient();
+                .WithHost(host, SchemeType.Https)
+                .BuildClient();
 
             // Act
 
@@ -65,8 +65,8 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, SchemeType.Http)
-                .CreateClient();
+                .WithHost(host, SchemeType.Http)
+                .BuildClient();
 
             // Act
 
@@ -85,8 +85,8 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, port: port)
-                .CreateClient();
+                .WithHost(host, port: port)
+                .BuildClient();
 
             // Act
 
@@ -106,8 +106,8 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, scheme:SchemeType.Https, port: port)
-                .CreateClient();
+                .WithHost(host, scheme:SchemeType.Https, port: port)
+                .BuildClient();
 
             // Act
 
@@ -126,8 +126,8 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, SchemeType.Http, port)
-                .CreateClient();
+                .WithHost(host, SchemeType.Http, port)
+                .BuildClient();
 
             // Act
 
@@ -147,15 +147,15 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, port: port)
+                .WithHost(host, port: port)
                 .WithBaseRoute(path)
-                .CreateClient();
+                .BuildClient();
 
             // Act
 
 
             // Assert
-            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}");
+            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}/");
         }
 
         [Theory]
@@ -169,14 +169,14 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, scheme:SchemeType.Https, port: port)
+                .WithHost(host, scheme:SchemeType.Https, port: port)
                 .WithBaseRoute(path)
-                .CreateClient();
+                .BuildClient();
 
             // Act
 
             // Assert
-            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}");
+            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}/");
         }
 
         [Theory]
@@ -190,14 +190,14 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Arrange
             var client = ClientBuilder
                 .CreateBuilder()
-                .ConfigureHost(host, SchemeType.Http, port)
+                .WithHost(host, SchemeType.Http, port)
                 .WithBaseRoute(path)
-                .CreateClient();
+                .BuildClient();
 
             // Act
 
             // Assert
-            client.BaseAddress.AbsoluteUri.Should().Be($"http://{host}:{port}/{path}");
+            client.BaseAddress.AbsoluteUri.Should().Be($"http://{host}:{port}/{path}/");
         }
     }
 }

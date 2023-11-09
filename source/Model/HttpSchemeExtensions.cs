@@ -14,13 +14,13 @@ namespace HttpClientBuilder.Model
 
         public static UriBuilder ToUriBuilder(this HttpScheme scheme, string host, string? basePath = null, int? port = null) =>
             basePath == null
-            ? new()
+            ? new UriBuilder()
                 {
                     Host = host,
                     Scheme = scheme,
                     Port = port?? scheme.GetDefaultPort()
                 }
-            : new()
+            : new UriBuilder()
                 {
                     Path = basePath,
                     Host = host,

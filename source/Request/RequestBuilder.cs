@@ -57,54 +57,11 @@ namespace HttpClientBuilder.Request
         #region Implementation of IRequest
 
         /// <inheritdoc />
-        public async Task Request()
+        public Task Request()
         {
             throw new NotImplementedException();
         }
 
         #endregion
-
-        #region Implementation of IResponseMap
-
-        /// <inheritdoc />
-        public IRequest MapResponse(Func<HttpStatusCode, Type> responseTypeMap)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-    }
-
-
-    public interface IRequestBuilder
-    {
-        IRequestVerb Make();
-    }
-
-    public interface IRequestVerb
-    {
-        IResponseType Get(string? url = default);
-        IResponseType Put(string? url = default);
-        IResponseType Post(string? url = default);
-        IResponseType Delete(string? url = default);
-    }
-
-    public interface IResponseType : IResponseMap
-    {
-
-    }
-
-    public interface IResponseMap
-    {
-        IRequest MapResponse(Func<HttpStatusCode, Type> responseTypeMap);
-    }
-    public interface IHandleExceptionMap
-    {
-        IRequest HandleException<TExceptionType>(Func<HttpStatusCode, TExceptionType> responseTypeMap) where TExceptionType : Exception;
-    }
-
-    public interface IRequest
-    {
-        Task Request();
     }
 }

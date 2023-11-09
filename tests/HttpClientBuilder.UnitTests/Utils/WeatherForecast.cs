@@ -2,7 +2,7 @@
 
 #pragma warning disable CS8618
 
-namespace HttpClientBuilder.IntegrationTests.Utils;
+namespace HttpClientBuilder.UnitTests.Utils;
 
 public class WeatherForecast
 {

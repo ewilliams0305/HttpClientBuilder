@@ -15,9 +15,9 @@ public class ClientBuilderBasicAuthorizationTests
         // Arrange
         var client = ClientBuilder
             .CreateBuilder()
-            .ConfigureHost("127.0.0.1")
-            .ConfigureBasicAuthorization(user, password)
-            .CreateClient();
+            .WithHost("127.0.0.1")
+            .WithBasicAuthorization(user, password)
+            .BuildClient();
 
         // Act
         var encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes(user + ":" + password));

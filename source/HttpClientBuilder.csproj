@@ -4,7 +4,37 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Http Client Builder</Title>
+    <Description>Client builder is a configuration builder for HTTP request piplines. The client builder can be used to create http clients configured against API models using an expressive and fluent API.</Description>
+    <PackageProjectUrl>https://github.com/ewilliams0305/HttpClientBuilder</PackageProjectUrl>
+    <PackageIcon>http_logo.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ewilliams0305/HttpClientBuilder</RepositoryUrl>
+    <PackageTags>http;https;builder;utility;</PackageTags>
+    <PackageReleaseNotes>Client builder is a configuration builder for HTTP request piplines. The client builder can be used to create http clients configured against API models using an expressive and fluent API.</PackageReleaseNotes>
+    <PackageOutputPath>..\release</PackageOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Examples\BuilderExamples.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Examples\BuilderExamples.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\http_logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="7.0.3" />

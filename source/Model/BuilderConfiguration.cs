@@ -4,6 +4,9 @@ using System.Net.Http.Headers;
 
 namespace HttpClientBuilder.Model
 {
+    /// <summary>
+    /// Stores the data required to create the Http Client.
+    /// </summary>
     internal sealed class BuilderConfiguration
     {
         public string Host { get; set; } = string.Empty;
