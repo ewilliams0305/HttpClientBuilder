@@ -5,12 +5,22 @@ using System.Net;
 
 namespace HttpClientBuilder
 {
+
+    public enum ResultStatus
+    {
+        Success,
+        HttpStatusError,
+        GeneralException
+    }
     /// <summary>
     /// The default implementation of the <seealso cref="IRequestResult"/>
     /// </summary>
     public readonly struct RequestResult: IRequestResult
     {
         #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public ResultStatus Status { get; }
 
         /// <inheritdoc />
         public HttpStatusCode? StatusCode { get; }
@@ -33,6 +43,7 @@ namespace HttpClientBuilder
         /// <param name="code">Http Status Code</param>
         public RequestResult(HttpStatusCode code)
         {
+            Status = ResultStatus.Success;
             StatusCode = code;
             Error = null;
         }
@@ -43,7 +54,20 @@ namespace HttpClientBuilder
         /// <param name="error">The reason the failure occurred.</param>
         public RequestResult(Exception error)
         {
+            Status = ResultStatus.GeneralException;
             StatusCode = null;
+            Error = error;
+        }
+
+        /// <summary>
+        /// Creates a new failed result.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="error">The reason the failure occurred.</param>
+        public RequestResult(HttpStatusCode code, Exception error)
+        {
+            Status = ResultStatus.HttpStatusError;
+            StatusCode = code;
             Error = error;
         }
 
@@ -52,7 +76,6 @@ namespace HttpClientBuilder
 
         public static implicit operator RequestResult(Exception exception) => new (exception);
         public static implicit operator RequestResult?(HttpStatusCode code) => new (code);
-
     }
     
     /// <summary>
@@ -62,6 +85,9 @@ namespace HttpClientBuilder
     public readonly struct RequestResult<TSuccessValue> : IRequestResult<TSuccessValue> where TSuccessValue : class
     {
         #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public ResultStatus Status { get; }
 
         /// <inheritdoc />
         public HttpStatusCode? StatusCode { get; }
@@ -88,6 +114,7 @@ namespace HttpClientBuilder
         /// <param name="value">Value Stored in the Result.</param>
         public RequestResult(HttpStatusCode code, TSuccessValue value)
         {
+            Status = ResultStatus.Success;
             StatusCode = code;
             Value = value;
             Error = null;
@@ -99,11 +126,24 @@ namespace HttpClientBuilder
         /// <param name="error">The reason the failure occurred.</param>
         public RequestResult(Exception error)
         {
+            Status = ResultStatus.GeneralException;
             StatusCode = null;
             Value = default;
             Error = error;
         }
 
+        /// <summary>
+        /// Creates a new failed result.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="error">The reason the failure occurred.</param>
+        public RequestResult(HttpStatusCode code, Exception error)
+        {
+            Status = ResultStatus.HttpStatusError;
+            StatusCode = code;
+            Value = default;
+            Error = error;
+        }
 
         public static implicit operator bool(RequestResult<TSuccessValue> result) => result.Success;
         public static implicit operator TSuccessValue?(RequestResult<TSuccessValue> result) => result.Value;

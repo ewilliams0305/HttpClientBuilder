@@ -52,7 +52,27 @@ namespace HttpClientBuilder
         /// <inheritdoc />
         public IAuthorizationBuilder WithBaseRoute(string route)
         {
-            _builderConfiguration.BasePath = route;
+            if (route.StartsWith("/") && route.EndsWith("/"))
+            {
+                _builderConfiguration.BasePath = route;
+                return this;
+            }
+
+            var builder = new StringBuilder();
+            
+            if (!route.StartsWith("/"))
+            {
+                builder.Append("/");
+            }
+
+            builder.Append(route);
+
+            if (!route.EndsWith("/"))
+            {
+                builder.Append("/");
+            }
+
+            _builderConfiguration.BasePath = builder.ToString();
             return this;
         }
 

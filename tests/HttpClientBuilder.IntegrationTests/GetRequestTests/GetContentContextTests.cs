@@ -12,7 +12,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
         public GetContentContextTests(AppFactory factory)
         {
             // Arrange
-            Client = factory.GetDefaultClient();
+            Client = factory.GetPrefixedClient();
         }
 
         [Fact]

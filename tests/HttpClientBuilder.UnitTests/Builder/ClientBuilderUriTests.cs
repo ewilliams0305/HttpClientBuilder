@@ -155,7 +155,7 @@ namespace HttpClientBuilder.UnitTests.Builder
 
 
             // Assert
-            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}");
+            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}/");
         }
 
         [Theory]
@@ -176,7 +176,7 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Act
 
             // Assert
-            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}");
+            client.BaseAddress.AbsoluteUri.Should().Be($"https://{host}:{port}/{path}/");
         }
 
         [Theory]
@@ -197,7 +197,7 @@ namespace HttpClientBuilder.UnitTests.Builder
             // Act
 
             // Assert
-            client.BaseAddress.AbsoluteUri.Should().Be($"http://{host}:{port}/{path}");
+            client.BaseAddress.AbsoluteUri.Should().Be($"http://{host}:{port}/{path}/");
         }
     }
 }

@@ -1,18 +1,17 @@
-using System.Net;
 using FluentAssertions;
 using HttpClientBuilder.IntegrationTests.ApplicationFactory;
-using HttpClientBuilder.IntegrationTests.Utils;
+using System.Net;
 
 namespace HttpClientBuilder.IntegrationTests.GetRequestTests
 {
     [Collection(Definitions.WebApiCollection)]
-    public partial class GetContentTests
+    public class GetContentTests
     {
-        protected readonly IHttpClient Client;
+        private readonly IHttpClient _client;
         public GetContentTests(AppFactory factory)
         {
             // Arrange
-            Client = factory.GetDefaultClient();
+            _client = factory.GetPrefixedClient();
         }
 
         [Fact]
@@ -21,7 +20,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentFromJsonAsync<Utils.WeatherForecast> ("/");
+            var result = await _client.GetContentFromJsonAsync<Utils.WeatherForecast>();
 
             // Assert
             result.Should().NotBeNull();
@@ -36,7 +35,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentFromJsonAsync<IEnumerable<Utils.WeatherForecast>>("weatherForecast");
+            var result = await _client.GetContentFromJsonAsync<IEnumerable<Utils.WeatherForecast>>("weatherForecast");
 
             // Assert
             result.Should().NotBeNull();
@@ -52,7 +51,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromStream: (code, stream) =>
+            var result = await _client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromStream: (code, stream) =>
             {
                 code.Should().Be(HttpStatusCode.OK);
                 stream.Should().NotBeNull();
@@ -75,7 +74,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromStreamAsync: (code, stream) =>
+            var result = await _client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromStreamAsync: (code, stream) =>
             {
                 code.Should().Be(HttpStatusCode.OK);
                 stream.Should().NotBeNull();
@@ -102,7 +101,9 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromBytes: (code, bytes) =>
+#pragma warning disable CS8625
+            var result = await _client.GetContentAsync<Utils.WeatherForecast>(null, createResultFromBytes: (code, bytes) =>
+#pragma warning restore CS8625
             {
                 code.Should().Be(HttpStatusCode.OK);
                 bytes.Should().NotBeNull();
@@ -125,7 +126,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromBytesAsync: (code, bytes) =>
+            var result = await _client.GetContentAsync<Utils.WeatherForecast>("", createResultFromBytesAsync: (code, bytes) =>
             {
                 code.Should().Be(HttpStatusCode.OK);
                 bytes.Should().NotBeNull();
@@ -152,7 +153,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromContent: (code, content) =>
+            var result = await _client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromContent: (code, content) =>
             {
                 code.Should().Be(HttpStatusCode.OK);
                 content.Should().NotBeNull();
@@ -175,7 +176,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await Client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromContentAsync: (code, content) =>
+            var result = await _client.GetContentAsync<Utils.WeatherForecast>("/", createResultFromContentAsync: (code, content) =>
             {
                 code.Should().Be(HttpStatusCode.OK);
                 content.Should().NotBeNull();
@@ -194,6 +195,21 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             result.StatusCode.Should().Be(HttpStatusCode.OK);
             result.Success.Should().BeTrue();
             result.Value.Should().NotBeNull();
+        }
+        
+        [Fact]
+        public async Task GetContent_DoesNotProcess_BadRequests()
+        {
+            // Arrange
+
+            // Act
+            var result = await _client.GetContentFromJsonAsync<Utils.WeatherForecast>("badrequest");
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            result.Success.Should().BeFalse();
+            result.Value.Should().BeNull();
         }
     }
 }

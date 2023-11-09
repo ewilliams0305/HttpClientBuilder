@@ -19,7 +19,7 @@ public interface IHttpGetRequests
     /// <param name="route">The specified route will be appended to the <seealso cref="IClientBuilder"/> default request <seealso cref="Uri"/></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult> GetAsync(string route = "/", CancellationToken cancellationToken = default);
+    Task<IRequestResult> GetAsync(string route = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route and deserializes the content as the specified return type. 
@@ -28,7 +28,7 @@ public interface IHttpGetRequests
     /// <param name="context"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "/", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IRequestResult<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route.

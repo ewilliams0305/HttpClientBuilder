@@ -21,6 +21,12 @@ namespace HttpClientBuilder
     public interface IRequestResult : IResponseCode
     {
         /// <summary>
+        /// The current state of the result object.
+        /// Results can only ever be an exception, http status error, or successful.
+        /// </summary>
+        ResultStatus Status { get; }
+
+        /// <summary>
         /// True while the <seealso cref="IRequestResult{TSuccessValue}"/> contains no exception data.
         /// </summary>
         bool Success { get; }

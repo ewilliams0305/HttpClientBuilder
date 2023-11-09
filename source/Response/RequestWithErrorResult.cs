@@ -15,6 +15,9 @@ public readonly struct RequestWithErrorResult<TSuccessValue, TErrorValue> : IReq
     #region Implementation of IResponseCode
 
     /// <inheritdoc />
+    public ResultStatus Status { get; }
+
+    /// <inheritdoc />
     public HttpStatusCode? StatusCode { get; }
 
     #endregion
@@ -46,6 +49,7 @@ public readonly struct RequestWithErrorResult<TSuccessValue, TErrorValue> : IReq
     /// <param name="value">Value Stored in the Result.</param>
     public RequestWithErrorResult(HttpStatusCode code, TSuccessValue value)
     {
+        Status = ResultStatus.Success;
         StatusCode = code;
         Value = value;
         ErrorValue = default;
@@ -59,6 +63,7 @@ public readonly struct RequestWithErrorResult<TSuccessValue, TErrorValue> : IReq
     /// <param name="errorValue">Value Stored in the Result.</param>
     public RequestWithErrorResult(HttpStatusCode code, TErrorValue errorValue)
     {
+        Status = ResultStatus.HttpStatusError;
         StatusCode = code;
         Value = default;
         ErrorValue = errorValue;
@@ -71,6 +76,7 @@ public readonly struct RequestWithErrorResult<TSuccessValue, TErrorValue> : IReq
     /// <param name="error">The reason the failure occurred.</param>
     public RequestWithErrorResult(Exception error)
     {
+        Status = ResultStatus.GeneralException;
         StatusCode = null;
         Value = default;
         ErrorValue = default;

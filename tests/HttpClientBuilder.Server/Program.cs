@@ -21,6 +21,13 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
+app.MapGet("/api", () => new WeatherForecast
+(
+    DateTime.Now.AddDays(1),
+    Random.Shared.Next(-20, 55),
+    summaries[Random.Shared.Next(summaries.Length)]
+));
+
 app.MapGet("/", () => new WeatherForecast
 (
     DateTime.Now.AddDays(1),
@@ -28,7 +35,7 @@ app.MapGet("/", () => new WeatherForecast
     summaries[Random.Shared.Next(summaries.Length)]
 ));
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/api/weatherforecast", () =>
 {
     var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
@@ -41,6 +48,8 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapGet("/api/badrequest", () => Results.BadRequest());
 
 app.Run();
 

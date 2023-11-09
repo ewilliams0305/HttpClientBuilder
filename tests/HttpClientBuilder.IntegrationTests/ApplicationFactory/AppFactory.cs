@@ -6,6 +6,14 @@ namespace HttpClientBuilder.IntegrationTests.ApplicationFactory
 {
     public class AppFactory : WebApplicationFactory<IAssemblyMarker> , IAsyncLifetime
     {
+        public IHttpClient GetBadHostClient()
+        {
+            var client = ClientBuilder.CreateBuilder()
+                .WithHost("10.12.25.6")
+                .BuildClient(CreateClient);
+
+            return client;
+        }
 
         public IHttpClient GetDefaultClient()
         {
@@ -14,7 +22,17 @@ namespace HttpClientBuilder.IntegrationTests.ApplicationFactory
                 .BuildClient(CreateClient);
 
             return client;
-        } 
+        }
+
+        public IHttpClient GetPrefixedClient()
+        {
+            var client = ClientBuilder.CreateBuilder()
+                .WithHost("127.0.0.1")
+                .WithBaseRoute("api")
+                .BuildClient(CreateClient);
+
+            return client;
+        }
 
         public IHttpClient GetBasicAuthClient(string user, string pass)
         {

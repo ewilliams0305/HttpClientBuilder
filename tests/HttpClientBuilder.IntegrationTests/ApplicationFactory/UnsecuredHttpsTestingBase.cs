@@ -6,6 +6,6 @@ public partial class UnsecuredHttpsTestingBase
     protected readonly IHttpClient Client;
     public UnsecuredHttpsTestingBase(AppFactory factory)
     {
-        Client = factory.GetDefaultClient();
+        Client = factory.GetPrefixedClient();
     }
 }
