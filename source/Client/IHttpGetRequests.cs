@@ -19,7 +19,7 @@ public interface IHttpGetRequests
     /// <param name="route">The specified route will be appended to the <seealso cref="IClientBuilder"/> default request <seealso cref="Uri"/></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult> GetAsync(string route = "", CancellationToken cancellationToken = default);
+    Task<IResponse> GetAsync(string route = "", CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route and deserializes the content as the specified return type. 
@@ -28,7 +28,7 @@ public interface IHttpGetRequests
     /// <param name="context"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route.
@@ -37,7 +37,7 @@ public interface IHttpGetRequests
     /// <param name="createResultFromContent"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route. 
@@ -46,7 +46,7 @@ public interface IHttpGetRequests
     /// <param name="createResultFromContentAsync"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route. 
@@ -55,7 +55,7 @@ public interface IHttpGetRequests
     /// <param name="createResultFromBytes"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route. 
@@ -64,7 +64,7 @@ public interface IHttpGetRequests
     /// <param name="createResultFromBytesAsync"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route. 
@@ -73,7 +73,7 @@ public interface IHttpGetRequests
     /// <param name="createResultFromStream"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default) where TSuccessType : class;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route. 
@@ -82,5 +82,5 @@ public interface IHttpGetRequests
     /// <param name="createResultFromStreamAsync"></param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
-    Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
+    Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
 }

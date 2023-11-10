@@ -11,7 +11,11 @@ public interface IResponseMap
     /// <summary>
     /// Maps a code => type
     /// </summary>
+    /// <param name="code"></param>
     /// <param name="responseTypeMap"></param>
     /// <returns></returns>
-    IRequest MapResponse<TResponseContent>(Func<HttpStatusCode, TResponseContent> responseTypeMap) where TResponseContent : class;
+    IRequest MapResponse<TResponseValue>(
+        HttpStatusCode code, 
+        Func<TResponseValue> responseTypeMap)
+        where TResponseValue : class;
 }

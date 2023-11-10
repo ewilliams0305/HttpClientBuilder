@@ -18,16 +18,16 @@ namespace HttpClientBuilder
     /// Provides a success or fail returned from an <seealso cref="IHttpClient"/> request.
     /// The request will be successful when the exception is null.  
     /// </summary>
-    public interface IRequestResult : IResponseCode
+    public interface IResponse : IResponseCode
     {
         /// <summary>
         /// The current state of the result object.
         /// Results can only ever be an exception, http status error, or successful.
         /// </summary>
-        ResultStatus Status { get; }
+        ResponseState Status { get; }
 
         /// <summary>
-        /// True while the <seealso cref="IRequestResult{TSuccessValue}"/> contains no exception data.
+        /// True while the <seealso cref="IResponse{TSuccessValue}"/> contains no exception data.
         /// </summary>
         bool Success { get; }
         /// <summary>
@@ -40,11 +40,10 @@ namespace HttpClientBuilder
     /// Stores a value from a request.
     /// </summary>
     /// <typeparam name="TSuccessValue">Value returned from the request</typeparam>
-    public interface IRequestResult<out TSuccessValue> 
-        : IRequestResult where TSuccessValue : class
+    public interface IResponse<out TSuccessValue> : IResponse where TSuccessValue : class
     {
         /// <summary>
-        /// Stored value.  This value will be null if there was an exception.  This value will never be null if the <seealso cref="IRequestResult"/> is successful.
+        /// Stored value.  This value will be null if there was an exception.  This value will never be null if the <seealso cref="IResponse"/> is successful.
         /// </summary>
         TSuccessValue? Value { get; }
     }
@@ -56,8 +55,7 @@ namespace HttpClientBuilder
     /// </summary>
     /// <typeparam name="TSuccessValue">Type of happy path object</typeparam>
     /// <typeparam name="TErrorValue">Type of failure path object</typeparam>
-    public interface IRequestResultWithError<out TSuccessValue, out TErrorValue> 
-        : IRequestResult<TSuccessValue> 
+    public interface IResponseWithError<out TSuccessValue, out TErrorValue> : IResponse<TSuccessValue> 
         where TSuccessValue : class 
         where TErrorValue : class
     {

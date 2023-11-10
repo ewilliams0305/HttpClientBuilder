@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 namespace HttpClientBuilder
 {
     /// <summary>
-    /// Extension methods used to process the results of a http request <seealso cref="IRequestResult{TSuccessValue}"/>
+    /// Extension methods used to process the results of a http request <seealso cref="IResponse{TSuccessValue}"/>
     /// </summary>
-    public static class RequestResultExtensions
+    public static class ResponseExtensions
     {
         /// <summary>
         /// Checks the result and ensures its a successful result before invoking a predicate.
@@ -19,8 +19,8 @@ namespace HttpClientBuilder
         /// <param name="predicate"></param>
         /// <param name="errorFactory"></param>
         /// <returns></returns>
-        public static IRequestResult<TValue> Ensure<TValue>(
-            this IRequestResult<TValue> response,
+        public static IResponse<TValue> Ensure<TValue>(
+            this IResponse<TValue> response,
             Func<TValue, bool> predicate,
             Func<Exception>? errorFactory = null) where TValue : class
         {
@@ -49,8 +49,8 @@ namespace HttpClientBuilder
         /// <param name="predicate"></param>
         /// <param name="errorFactory"></param>
         /// <returns></returns>
-        public static async Task<IRequestResult<TValue>> EnsureAsync<TValue>(
-            this Task<IRequestResult<TValue>> response,
+        public static async Task<IResponse<TValue>> EnsureAsync<TValue>(
+            this Task<IResponse<TValue>> response,
             Func<TValue, bool> predicate,
             Func<Exception>? errorFactory = null) where TValue : class
         {
@@ -81,8 +81,8 @@ namespace HttpClientBuilder
         /// <param name="predicateAsync"></param>
         /// <param name="errorFactory"></param>
         /// <returns></returns>
-        public static async Task<IRequestResult<TValue>> EnsureAsync<TValue>(
-            this Task<IRequestResult<TValue>> response,
+        public static async Task<IResponse<TValue>> EnsureAsync<TValue>(
+            this Task<IResponse<TValue>> response,
             Func<TValue, Task<bool>> predicateAsync,
             Func<Exception>? errorFactory = null) where TValue : class
         {
@@ -115,8 +115,8 @@ namespace HttpClientBuilder
         /// <param name="value"></param>
         /// <param name="error"></param>
         /// <returns></returns>
-        public static IRequestResult<TValue> Handle<TValue>(
-            this IRequestResult<TValue> response,
+        public static IResponse<TValue> Handle<TValue>(
+            this IResponse<TValue> response,
             Action<HttpStatusCode, TValue> value,
             Action<Exception> error) where TValue : class
         {
@@ -141,8 +141,8 @@ namespace HttpClientBuilder
         /// <param name="value"></param>
         /// <param name="error"></param>
         /// <returns></returns>
-        public static async Task<IRequestResult<TValue>> HandleAsync<TValue>(
-            this Task<IRequestResult<TValue>> response,
+        public static async Task<IResponse<TValue>> HandleAsync<TValue>(
+            this Task<IResponse<TValue>> response,
             Action<HttpStatusCode, TValue> value,
             Action<Exception> error) where TValue : class
         {

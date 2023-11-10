@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace HttpClientBuilder.Request
 {
     internal sealed class RequestBuilder : IRequestBuilder, IRequestVerb, IResponseType, IRequest
     {
-        private Dictionary<HttpStatusCode, Func<HttpStatusCode, Stream, Task<IRequestResult<TValue>>>? _bodyHandlers;
+        private Dictionary<HttpStatusCode, Delegate>? _bodyHandlers;
 
         #region Implementation of IRequestBuilder
 
@@ -49,17 +52,17 @@ namespace HttpClientBuilder.Request
         #region Implementation of IResponseMap
 
         /// <inheritdoc />
-        public IRequest MapResponse<TResponseValue>(HttpStatusCode code, Func<Content, TResponseValue> responseTypeMap) where TResponseValue : class
-        { 
-            if(_bodyHandlers == null)
-            {
-                _bodyHandlers = new();
-            }
+        public IRequest MapResponse<TResponseValue>(HttpStatusCode code, Func<TResponseValue> responseTypeMap) where TResponseValue : class
+        {
+            _bodyHandlers ??= new Dictionary<HttpStatusCode, Delegate>();
+
             if(_bodyHandlers.ContainsKey(code))
             {
-                throw new Exception("Sttus code already added to pipline");
+                throw new Exception($"{code} Status code already added to request pipeline");
             }
-            _bodyHandlers.Add(code, function);
+            _bodyHandlers.Add(code, responseTypeMap);
+
+            return this;
         }
 
         #endregion
@@ -67,14 +70,9 @@ namespace HttpClientBuilder.Request
         #region Implementation of IRequest
 
         /// <inheritdoc />
-        public Task<IRequestResult> Request()
+        public Task<IResponse> Request()
         {
-            var response = await _client.Get("");
-            
-            if(_bodyHandler.ContainsKey(response.StatusCode))
-            {
-                var obj = await _bodyHandler[code].Invoke(code);
-            }
+            throw new NotImplementedException();
         }
 
         #endregion

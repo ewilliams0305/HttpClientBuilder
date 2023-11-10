@@ -7,7 +7,7 @@ namespace HttpClientBuilder;
 /// <summary>
 /// 
 /// </summary>
-public interface IHttpClient : IHttpGetRequests, IDisposable
+public interface IHttpClient : IHttpGetRequests, IDispatchHandlerFactory, IDisposable
 {
     /// <summary>
     /// Provides readonly access to the URI built bby the <seealso cref="IClientBuilder"/> pipeline.

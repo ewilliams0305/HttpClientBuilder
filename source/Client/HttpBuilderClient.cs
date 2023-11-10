@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HttpClientBuilder.Request;
+using HttpClientBuilder.Requests;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -7,14 +9,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using HttpClientBuilder.Request;
 
 namespace HttpClientBuilder
 {
     internal sealed class HttpBuilderClient : IHttpClient
     {
-        private readonly HttpClient _client;
 
+        private readonly HttpClient _client;
+        
         public HttpBuilderClient(HttpClient client)
         {
             _client = client;
@@ -39,11 +41,26 @@ namespace HttpClientBuilder
 
         #endregion
 
+        #region Implementation of IHttpHandleRequests
+
+        /// <inheritdoc />
+        public IDispatchHandler CreateGetHandler(string path, IRequestHandler handler) => new DispatchHandlerWithoutBody(path, _client.GetAsync, handler);
+
+        /// <inheritdoc />
+        public IDispatchHandler CreatePostHandler(string path,  IRequestHandler handler) => new DispatchHandlerWithBody(path, _client.PostAsync, handler);
+
+        /// <inheritdoc />
+        public IDispatchHandler CreatePutHandler(string path, IRequestHandler handler) => new DispatchHandlerWithBody(path, _client.PutAsync, handler);
+
+        /// <inheritdoc />
+        public IDispatchHandler CreateDeleteHandler(string path, IRequestHandler handler) => new DispatchHandlerWithoutBody(path, _client.DeleteAsync, handler);
+
+        #endregion
 
         #region Implementation of IHttpGetRequests
 
         /// <inheritdoc />
-        public async Task<IRequestResult> GetAsync(string route = "", CancellationToken cancellationToken = default)
+        public async Task<IResponse> GetAsync(string route = "", CancellationToken cancellationToken = default)
         {
             var path = RemoveSlashes(route);
 
@@ -52,21 +69,21 @@ namespace HttpClientBuilder
                 var response = await _client.GetAsync(path, cancellationToken).ConfigureAwait(false);
 
                 return response.IsSuccessStatusCode
-                    ? new RequestResult(response.StatusCode)
-                    : new RequestResult(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                    ? new Response(response.StatusCode)
+                    : new Response(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new RequestResult(argumentException);
+                return new Response(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new RequestResult(requestException);
+                return new Response(requestException);
             }
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
 
@@ -109,7 +126,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
 
@@ -142,7 +159,7 @@ namespace HttpClientBuilder
             }
         }
         
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, Task<TSuccessType?>> createResultFromContentAsync, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
 
@@ -176,7 +193,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], TSuccessType?> createResultFromBytes, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
 
@@ -216,7 +233,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, byte[], Task<TSuccessType?>> createResultFromBytesAsync, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
 
@@ -257,7 +274,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, TSuccessType?> createResultFromStream, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
 
@@ -298,7 +315,7 @@ namespace HttpClientBuilder
         }
 
         /// <inheritdoc />
-        public async Task<IRequestResult<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default) where TSuccessType : class
+        public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default) where TSuccessType : class
         {
             var path = RemoveSlashes(route);
            
@@ -377,6 +394,6 @@ namespace HttpClientBuilder
 
         #endregion
 
-
+        
     }
 }

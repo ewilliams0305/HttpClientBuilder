@@ -11,5 +11,5 @@ public interface IRequest
     /// Starts the HTTP Request
     /// </summary>
     /// <returns>Asynchronous Task.</returns>
-    Task Request();
+    Task<IResponse> Request();
 }

@@ -27,10 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Examples\BuilderExamples.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\docs\http_logo.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -47,6 +43,10 @@
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="7.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Examples\BuilderExamples.cs" />
   </ItemGroup>
 
 </Project>
