@@ -58,8 +58,8 @@ return response.Success;
 
 # Building
 To begin using the `IHttpClient` interface the `ClientBuilder`
-must be used. Begin the build pipline by involing the `ClientBuilder.CreateBuilder()`
-static factory. This will return an `IClientBuilder` interface directing consumers through 
+static factory is used. Begin the build pipline by invoking the `ClientBuilder.CreateBuilder()`
+static method. This will return an `IClientBuilder` interface directing consumers through 
 each step of the build pipeline. 
 
 ### Configure Host Settings
@@ -90,11 +90,29 @@ Beaer Token, Api Keys, and finally an optional Factory.
 
 To add a default authorization bearer token to the client, invoke the 
 `ConfigureBearerToken(token)` method. The provided token will be added to all
-requests an *Authorization: Bearer Token...* header. 
+requests as an *Authorization: Bearer Token...* header. *Note: a future async pipeline will be provided to enable
+to facilitate asynchronous authentication configuration*
 ```csharp
 IHttpClient client = ClientBuilder.CreateBuilder()
     .WithHost("172.26.6.104")
     .WithBearerToken("JWT TOKEN HERE")
+    .CreateClient();
+```
+Basic authentication is supported by invoking the `WithBasicAuth` method. 
+The provided username and password will be Base64 encoded as a Basic authentication header. 
+```csharp
+IHttpClient client = ClientBuilder.CreateBuilder()
+    .WithHost("172.26.6.104")
+    .WithBasicAuth(username: "", password: "")
+    .CreateClient();
+```
+Apikeys can be added to all default requests using the `WithApiKey` method. 
+This method requires an APIKEY value with an option to specify a key used for the header. 
+The header will default to `x-api-key` if none is provided.  
+```csharp
+IHttpClient client = ClientBuilder.CreateBuilder()
+    .WithHost("172.26.6.104")
+    .WithApiKey("api key", optional? header)
     .CreateClient();
 ```
 
@@ -105,9 +123,13 @@ results of a specific HTTP
 ![Static Badge](https://img.shields.io/badge/HTTP-GET-blue), 
 ![Static Badge](https://img.shields.io/badge/HTTP-POST-green), 
 ![Static Badge](https://img.shields.io/badge/HTTP-PUT-yellow), 
-![Static Badge](https://img.shields.io/badge/HTTP-DELETE-red).
+![Static Badge](https://img.shields.io/badge/HTTP-DELETE-red) request. When leveraging 
+the handlers API request are initially configured and later invoked as needed. This aims to reduce
+boiler plate code, prevent the need for simple methods that wrap HTTP requests, and help with 
+seperation of concerns. Here our client code reads more like server code, we create requests 
+and point them at handlers.   
 
-#### Creating Handlers
+### Creating Handlers
 ```csharp
 public class WeatherForecastHandler : IRequestHandler
 {
@@ -122,7 +144,7 @@ public class WeatherForecastHandler : IRequestHandler
     }
 }
 ```
-#### Creating Dispatchers
+### Creating Dispatchers
 Create a `IHttpClient` using the `IClientBuilder` as described [above](#Building). 
 ```csharp
 var client = ClientBuilder.CreateBuilder()
@@ -141,7 +163,7 @@ var getWeatherRequest = client.CreateGetHandler("forecast", new WeatherForecastH
 var getSnowRequest = client.CreatePostHandler("snow", new WeatherForecastHandler());
 var getRainRequest = client.CreateGetHandler("rain", new WeatherForecastHandler());
 ```
-#### Dispatching Requests
+### Dispatching Requests
 These `IDispatchRequest` requests can now be executed or better *dispatched* to the server by awaiting the `DispatchAsync()`.
 Here we are awaiting all three tasks concurrently.
 ```csharp
@@ -150,7 +172,7 @@ await Task.WhenAll(
     getSnowRequest.DispatchAsync(new StringContent("HELLO Content")),
     getWeatherRequest.DispatchAsync());
 ```
-#### Disposing Requests
+### Disposing Requests
 If your handlers require clean up or they have a short lifecycle you can execute the dispose method on the `IDispatchRequest`
 interface.  Handlers requiring clean up should implment the `IDisposableRequestHandler` interface.  This interface will add the `IDisposable` 
 members to your handler. Invoking the `IDispatchRequest.Dispose()` method will dispose you handler as well if the `IRequestHandler` 
