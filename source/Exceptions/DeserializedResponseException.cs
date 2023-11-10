@@ -5,7 +5,7 @@ namespace HttpClientBuilder;
 
 /// <summary>
 /// Exception when attempting to deserialize a JSON content response.
-/// If the <seealso cref="IHttpClient"/> fails to convert the content body to the provided type this exception will be returned in the <seealso cref="IRequestResult{TSuccessValue}"/>.
+/// If the <seealso cref="IHttpClient"/> fails to convert the content body to the provided type this exception will be returned in the <seealso cref="IResponse{TSuccessValue}"/>.
 /// <remarks>This exception will be returned any time the status code is a successful code, but the content body deserialization returns null.</remarks>
 /// </summary>
 public sealed class DeserializedResponseException : Exception

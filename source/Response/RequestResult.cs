@@ -5,22 +5,15 @@ using System.Net;
 
 namespace HttpClientBuilder
 {
-
-    public enum ResultStatus
-    {
-        Success,
-        HttpStatusError,
-        GeneralException
-    }
     /// <summary>
-    /// The default implementation of the <seealso cref="IRequestResult"/>
+    /// The default implementation of the <seealso cref="IResponse"/>
     /// </summary>
-    public readonly struct RequestResult: IRequestResult
+    public readonly struct Response: IResponse
     {
         #region Implementation of IResponseCode
 
         /// <inheritdoc />
-        public ResultStatus Status { get; }
+        public ResponseState Status { get; }
 
         /// <inheritdoc />
         public HttpStatusCode? StatusCode { get; }
@@ -41,9 +34,9 @@ namespace HttpClientBuilder
         /// Creates a new successful result.
         /// </summary>
         /// <param name="code">Http Status Code</param>
-        public RequestResult(HttpStatusCode code)
+        public Response(HttpStatusCode code)
         {
-            Status = ResultStatus.Success;
+            Status = ResponseState.Success;
             StatusCode = code;
             Error = null;
         }
@@ -52,9 +45,9 @@ namespace HttpClientBuilder
         /// Creates a new failed result.
         /// </summary>
         /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(Exception error)
+        public Response(Exception error)
         {
-            Status = ResultStatus.GeneralException;
+            Status = ResponseState.Exception;
             StatusCode = null;
             Error = error;
         }
@@ -64,30 +57,30 @@ namespace HttpClientBuilder
         /// </summary>
         /// <param name="code"></param>
         /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(HttpStatusCode code, Exception error)
+        public Response(HttpStatusCode code, Exception error)
         {
-            Status = ResultStatus.HttpStatusError;
+            Status = ResponseState.HttpStatusError;
             StatusCode = code;
             Error = error;
         }
 
-        public static implicit operator Exception?(RequestResult result) => result.Error;
-        public static implicit operator HttpStatusCode?(RequestResult result) => result.StatusCode;
+        public static implicit operator Exception?(Response result) => result.Error;
+        public static implicit operator HttpStatusCode?(Response result) => result.StatusCode;
 
-        public static implicit operator RequestResult(Exception exception) => new (exception);
-        public static implicit operator RequestResult?(HttpStatusCode code) => new (code);
+        public static implicit operator Response(Exception exception) => new (exception);
+        public static implicit operator Response?(HttpStatusCode code) => new (code);
     }
     
     /// <summary>
-    /// The default implementation of the <seealso cref="IRequestResult{TSuccessValue}"/>
+    /// The default implementation of the <seealso cref="IResponse{TSuccessValue}"/>
     /// </summary>
     /// <typeparam name="TSuccessValue">Type of object stored in the response.</typeparam>
-    public readonly struct RequestResult<TSuccessValue> : IRequestResult<TSuccessValue> where TSuccessValue : class
+    public readonly struct RequestResult<TSuccessValue> : IResponse<TSuccessValue> where TSuccessValue : class
     {
         #region Implementation of IResponseCode
 
         /// <inheritdoc />
-        public ResultStatus Status { get; }
+        public ResponseState Status { get; }
 
         /// <inheritdoc />
         public HttpStatusCode? StatusCode { get; }
@@ -114,7 +107,7 @@ namespace HttpClientBuilder
         /// <param name="value">Value Stored in the Result.</param>
         public RequestResult(HttpStatusCode code, TSuccessValue value)
         {
-            Status = ResultStatus.Success;
+            Status = ResponseState.Success;
             StatusCode = code;
             Value = value;
             Error = null;
@@ -126,7 +119,7 @@ namespace HttpClientBuilder
         /// <param name="error">The reason the failure occurred.</param>
         public RequestResult(Exception error)
         {
-            Status = ResultStatus.GeneralException;
+            Status = ResponseState.Exception;
             StatusCode = null;
             Value = default;
             Error = error;
@@ -139,7 +132,7 @@ namespace HttpClientBuilder
         /// <param name="error">The reason the failure occurred.</param>
         public RequestResult(HttpStatusCode code, Exception error)
         {
-            Status = ResultStatus.HttpStatusError;
+            Status = ResponseState.HttpStatusError;
             StatusCode = code;
             Value = default;
             Error = error;

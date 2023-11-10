@@ -4,7 +4,7 @@ using System.Net;
 namespace HttpClientBuilder;
 
 /// <summary>
-/// An exception returned in the <seealso cref="IRequestResult{TSuccessValue}"/> when a content body is empty that should be deserialized into a strongly typed object.
+/// An exception returned in the <seealso cref="IResponse{TSuccessValue}"/> when a content body is empty that should be deserialized into a strongly typed object.
 /// </summary>
 public sealed class EmptyBodyResponseException : Exception
 {

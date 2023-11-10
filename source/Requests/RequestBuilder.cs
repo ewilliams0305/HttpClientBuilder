@@ -1,11 +1,16 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace HttpClientBuilder.Request
 {
     internal sealed class RequestBuilder : IRequestBuilder, IRequestVerb, IResponseType, IRequest
     {
+        private Dictionary<HttpStatusCode, Delegate>? _bodyHandlers;
+
         #region Implementation of IRequestBuilder
 
         /// <inheritdoc />
@@ -47,9 +52,17 @@ namespace HttpClientBuilder.Request
         #region Implementation of IResponseMap
 
         /// <inheritdoc />
-        public IRequest MapResponse<TResponseValue>(Func<HttpStatusCode, TResponseValue> responseTypeMap) where TResponseValue : class
+        public IRequest MapResponse<TResponseValue>(HttpStatusCode code, Func<TResponseValue> responseTypeMap) where TResponseValue : class
         {
-            throw new NotImplementedException();
+            _bodyHandlers ??= new Dictionary<HttpStatusCode, Delegate>();
+
+            if(_bodyHandlers.ContainsKey(code))
+            {
+                throw new Exception($"{code} Status code already added to request pipeline");
+            }
+            _bodyHandlers.Add(code, responseTypeMap);
+
+            return this;
         }
 
         #endregion
@@ -57,7 +70,7 @@ namespace HttpClientBuilder.Request
         #region Implementation of IRequest
 
         /// <inheritdoc />
-        public Task Request()
+        public Task<IResponse> Request()
         {
             throw new NotImplementedException();
         }
