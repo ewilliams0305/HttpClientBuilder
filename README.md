@@ -3,7 +3,7 @@
 # HTTP Client Builder
 ![GitHub](https://img.shields.io/github/license/ewilliams0305/ClientBuilder) 
 ![GitHub all releases](https://img.shields.io/github/downloads/ewilliams0305/ClientBuilder/total) 
-![Nuget](https://img.shields.io/nuget/dt/ClientBuilder)
+![Nuget](https://img.shields.io/nuget/dt/HttpClientBuilder)
 ![GitHub issues](https://img.shields.io/github/issues/ewilliams0305/ClientBuilder)
 ![GitHub Repo stars](https://img.shields.io/github/stars/ewilliams0305/ClientBuilder?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/ewilliams0305/ClientBuilder?style=social)
@@ -178,7 +178,7 @@ await Task.WhenAll(
 If your handlers require clean up or they have a short lifecycle you can execute the dispose method on the `IDispatchRequest`
 interface.  Handlers requiring clean up should implment the `IDisposableRequestHandler` interface.  This interface will add the `IDisposable` 
 members to your handler. Invoking the `IDispatchRequest.Dispose()` method will dispose you handler. 
-```
+```csharp
 public class WeatherForecastHandler : IDisposableRequestHandler
 {
     public async Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content){}
