@@ -4,12 +4,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace HttpClientBuilder.Requests
+namespace HttpClientBuilder
 {
     /// <summary>
     /// Handles a response from a HTTP request
     /// </summary>
-    public interface IRequestHandler : IDisposable
+    public interface IRequestHandler
     {
         /// <summary>
         /// Handles a response with no content processing.  Data will be dispatched as it was received from the server.
@@ -28,5 +28,13 @@ namespace HttpClientBuilder.Requests
         /// <param name="body"></param>
         /// <returns></returns>
         Task HandleRequest<TValue>(HttpStatusCode code, HttpResponseHeaders headers, TValue body);
+    }
+
+    /// <summary>
+    /// Adds a disposable method to the handler
+    /// </summary>
+    public interface IDisposableRequestHandler : IRequestHandler, IDisposable
+    {
+
     }
 }

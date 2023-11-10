@@ -81,32 +81,20 @@ namespace HttpClientBuilder.Examples
 
     internal class WeatherForecastHandler : IRequestHandler
     {
-
-        #region Implementation of IRequestHandler
-
-        /// <inheritdoc />
         public async Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content)
         {
             // Called when no post request processing is required.
         }
 
-        /// <inheritdoc />
         public async Task HandleRequest<TValue>(HttpStatusCode code, HttpResponseHeaders headers, TValue body)
         {
             // Called when post request body processing is required.
         }
 
-        #endregion
-
-        #region IDisposable
-
-        /// <inheritdoc />
         public void Dispose()
         {
             // The handles dispose method will be invoked if you dispose of the IDispatch Request.
         }
-
-        #endregion
     }
 
     internal class Weather

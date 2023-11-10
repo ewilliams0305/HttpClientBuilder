@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using HttpClientBuilder.Requests;
 
 namespace HttpClientBuilder;
 
@@ -35,7 +34,10 @@ internal class DispatchHandlerWithoutBody : IDispatchHandler
     /// <inheritdoc />
     public void Dispose()
     {
-        _handler.Dispose();
+        if (_handler is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }
 
@@ -69,6 +71,9 @@ internal class DispatchHandlerWithBody : IDispatchHandler
     /// <inheritdoc />
     public void Dispose()
     {
-        _handler.Dispose();
+        if (_handler is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }

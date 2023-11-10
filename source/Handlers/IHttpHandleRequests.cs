@@ -1,6 +1,4 @@
-﻿using HttpClientBuilder.Requests;
-
-namespace HttpClientBuilder;
+﻿namespace HttpClientBuilder;
 
 /// <summary>
 /// Provides functions that create <seealso cref="IDispatchHandler"/> handlers.

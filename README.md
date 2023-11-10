@@ -20,34 +20,41 @@ var client = ClientBuilder.CreateBuilder()
     .WithHeader("x-api-key", "this is an extra header")
     .BuildClient();
 
-public async Task<bool> ExampleGetWeatherAndCheckIfItsNice()
-{
-    var response = await client
-        .GetContentAsync<Weather>("weather")
-        .EnsureAsync(
-            predicate: (weather) => weather.IsNice && weather.Temperature > 60,
-            errorFactory: () => new Exception("THE WEATHER IS NOT NICE"))
-        .HandleAsync(
-            value: (code, weather) =>
-            {
-                //PROCESS WEATHER ONLY IF THE WEATHER IS NICE AND GREATER THAN 60
-            },
-            error: (exception) =>
-            {
-                //PROCESS ERROR ONLY IF THE REQUEST FAILED OR THE WEATHER IS NOT NICE
-            });
+var response = await client
+    .GetContentFromJsonAsync<Weather>("forecast")
+    .EnsureAsync(
+        predicate: (weather) => weather.IsNice && weather.Temperature > 60,
+        errorFactory: () => new Exception("THE WEATHER IS NOT NICE"))
+    .HandleAsync(
+        value: (code, weather) =>
+        {
+            //PROCESS WEATHER ONLY IF THE WEATHER IS NICE AND GREATER THAN 60
+        },
+        error: (exception) =>
+        {
+            //PROCESS ERROR ONLY IF THE REQUEST FAILED OR THE WEATHER IS NOT NICE
+        });
 
-    return response.Success;
-}
+var getWeatherRequest = client.AddGetHandler("forecast", new WeatherForecastHandler());
+var getSnowRequest = client.AddGetHandler("snow", new WeatherForecastHandler());
+var getRainRequest = client.AddGetHandler("rain", new WeatherForecastHandler());
+
+await Task.WhenAll(
+    getRainRequest.DispatchAsync(), 
+    getSnowRequest.DispatchAsync(), 
+    getWeatherRequest.DispatchAsync());
+
+return response.Success;
+        
 ```
 
 ![Readme Image](./docs/readme_header.png)
 
 ## Table of Contents
 1. [Building Clients](#Building)
-2. [Expressions](#Expressions)
-3. [Requests](#Requests)
-4. [Responses](#Responses)
+2. [Request Handlers](#Request-Handlers)
+3. [Request Methods](#Request-Methods)
+4. [Response Types](#Response-Types)
 
 # Building
 To begin using the `IHttpClient` interface the `ClientBuilder`
@@ -91,8 +98,129 @@ IHttpClient client = ClientBuilder.CreateBuilder()
     .CreateClient();
 ```
 
-# Expressions
+# Request Handlers
 
-# Requests
+Create a new **handler** or class that implments the `IRequestHandler` interface to handle the 
+results of a specific HTTP 
+![Static Badge](https://img.shields.io/badge/HTTP-GET-blue), 
+![Static Badge](https://img.shields.io/badge/HTTP-POST-green), 
+![Static Badge](https://img.shields.io/badge/HTTP-PUT-yellow), 
+![Static Badge](https://img.shields.io/badge/HTTP-DELETE-red).
 
-# Responses
+#### Creating Handlers
+```csharp
+public class WeatherForecastHandler : IRequestHandler
+{
+    public async Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content)
+    {
+        // Called when no post request processing is required.
+    }
+
+    public async Task HandleRequest<TValue>(HttpStatusCode code, HttpResponseHeaders headers, TValue body)
+    {
+        // Called when post request body processing is required.
+    }
+}
+```
+#### Creating Dispatchers
+Create a `IHttpClient` using the `IClientBuilder` as described [above](#Building). 
+```csharp
+var client = ClientBuilder.CreateBuilder()
+    .WithHost("172.26.6.104")
+    .WithBaseRoute("api/weather")
+    .BuildClient();
+```
+
+Once a new client is created you can call the `Create[VERB]Handler()` with a provided *path* and reference to 
+an `IRequestHandler`. The example below creates three new ![Static Badge](https://img.shields.io/badge/HTTP-GET-blue) requests directed towards  
+*https://172.26.6.104/forecast/*, *https://172.26.6.104/snow/*, and *https://172.26.6.104/rain/*.  
+Each `Create[VERB]Handler` methos returns an instance of an `IDispatchRequest` interface.  
+
+```csharp
+var getWeatherRequest = client.CreateGetHandler("forecast", new WeatherForecastHandler());
+var getSnowRequest = client.CreatePostHandler("snow", new WeatherForecastHandler());
+var getRainRequest = client.CreateGetHandler("rain", new WeatherForecastHandler());
+```
+#### Dispatching Requests
+These `IDispatchRequest` requests can now be executed or better *dispatched* to the server by awaiting the `DispatchAsync()`.
+Here we are awaiting all three tasks concurrently.
+```csharp
+await Task.WhenAll(
+    getRainRequest.DispatchAsync(),
+    getSnowRequest.DispatchAsync(new StringContent("HELLO Content")),
+    getWeatherRequest.DispatchAsync());
+```
+#### Disposing Requests
+If your handlers require clean up or they have a short lifecycle you can execute the dispose method on the `IDispatchRequest`
+interface.  Handlers requiring clean up should implment the `IDisposableRequestHandler` interface.  This interface will add the `IDisposable` 
+members to your handler. Invoking the `IDispatchRequest.Dispose()` method will dispose you handler as well if the `IRequestHandler` 
+also implements the `IDisposable` interface.
+```
+
+public class WeatherForecastHandler : IDisposableRequestHandler
+{
+    public async Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content){}
+
+    public async Task HandleRequest<TValue>(HttpStatusCode code, HttpResponseHeaders headers, TValue body){}
+
+    public void Dispose()
+    {
+        // The handles dispose method will be invoked if you dispose of the IDispatch Request.
+    }
+}
+
+// You can also create a life cycle request.
+using var getUglyDWeather = client.AddGetHandler("ugly", new WeatherForecastHandler());
+await getUglyDWeather.DispatchAsync();
+
+// Your IDispatch instance will now be disposed
+```
+
+# Request Methods
+
+### ![Static Badge](https://img.shields.io/badge/HTTP-GET-blue)
+
+```csharp
+var response = await client.GetContentFromJsonAsync<Weather>("forecast")
+```
+
+### ![Static Badge](https://img.shields.io/badge/HTTP-POST-green)
+
+### ![Static Badge](https://img.shields.io/badge/HTTP-PUT-yellow)
+
+### ![Static Badge](https://img.shields.io/badge/HTTP-DELETE-red)
+
+# Response Types
+All requests will return an `IResponse` interface.  This interface provides `HttpStatusCode`, Stores any handled `Exceptions` and stores a `Value<T>`
+processed by the body.  An `IRespons` can only ever be one of three things, a `Success`, `Exception`, or `Error`.
+
+## Extension Methods
+
+#### Ensure
+The Ensure method lets you safely access the nullable types stored in the `IResponse` as the callbacks will only be invoked when the result is 
+already successful and stores a Value.  The ensure method then provides a predicate that will allow consumers to evealuate the data stored in the `IResponse`
+
+```csharp
+var response = await client
+    .GetContentFromJsonAsync<Weather>("forecast")
+    .EnsureAsync(
+        predicate: (weather) => weather.IsNice && weather.Temperature > 60,
+        errorFactory: () => new Exception("THE WEATHER IS NOT NICE"));
+```
+Ensure also provides an Async Facllback allowing consumers to access additional asynconouse resources for data validation.
+```csharp
+var response = await client
+    .GetContentFromJsonAsync<Weather>("forecast")
+    .EnsureAsync(
+        predicateAsync: async (weather) => await CheckWeather(weather),
+        errorFactory: () => new Exception("THE WEATHER IS NOT NICE"));
+```
+
+```csharp
+var response = await client
+    .GetContentFromJsonAsync<Weather>("forecast")
+    .EnsureAsync(
+        predicateAsync: async (weather) => await CheckWeather(weather),
+        errorFactory: () => new Exception("THE WEATHER IS NOT NICE"));
+```
+
