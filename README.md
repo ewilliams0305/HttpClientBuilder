@@ -156,7 +156,7 @@ var client = ClientBuilder.CreateBuilder()
 Once a new client is created you can call the `Create[VERB]Handler()` with a provided *path* and reference to 
 an `IRequestHandler`. The example below creates three new ![Static Badge](https://img.shields.io/badge/HTTP-REQUESTS-blue) directed towards  
 ![Static Badge](https://img.shields.io/badge/HTTP-GET-blue) *https://172.26.6.104/forecast/*, 
-![Static Badge](https://img.shields.io/badge/HTTP-POST-blue) *https://172.26.6.104/snow/*, and 
+![Static Badge](https://img.shields.io/badge/HTTP-POST-green) *https://172.26.6.104/snow/*, and 
 ![Static Badge](https://img.shields.io/badge/HTTP-GET-blue) *https://172.26.6.104/rain/*.  
 Each `Create[VERB]Handler` method returns an instance of an `IDispatchRequest` interface.  
 
