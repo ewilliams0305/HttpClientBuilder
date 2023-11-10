@@ -1,5 +1,4 @@
 ﻿using HttpClientBuilder.Request;
-using HttpClientBuilder.Requests;
 using System;
 using System.IO;
 using System.Net;
