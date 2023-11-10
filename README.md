@@ -154,9 +154,11 @@ var client = ClientBuilder.CreateBuilder()
 ```
 
 Once a new client is created you can call the `Create[VERB]Handler()` with a provided *path* and reference to 
-an `IRequestHandler`. The example below creates three new ![Static Badge](https://img.shields.io/badge/HTTP-GET-blue) requests directed towards  
-*https://172.26.6.104/forecast/*, *https://172.26.6.104/snow/*, and *https://172.26.6.104/rain/*.  
-Each `Create[VERB]Handler` methos returns an instance of an `IDispatchRequest` interface.  
+an `IRequestHandler`. The example below creates three new ![Static Badge](https://img.shields.io/badge/HTTP-REQUESTS-blue) directed towards  
+![Static Badge](https://img.shields.io/badge/HTTP-GET-blue) *https://172.26.6.104/forecast/*, 
+![Static Badge](https://img.shields.io/badge/HTTP-POST-blue) *https://172.26.6.104/snow/*, and 
+![Static Badge](https://img.shields.io/badge/HTTP-GET-blue) *https://172.26.6.104/rain/*.  
+Each `Create[VERB]Handler` method returns an instance of an `IDispatchRequest` interface.  
 
 ```csharp
 var getWeatherRequest = client.CreateGetHandler("forecast", new WeatherForecastHandler());
@@ -175,10 +177,8 @@ await Task.WhenAll(
 ### Disposing Requests
 If your handlers require clean up or they have a short lifecycle you can execute the dispose method on the `IDispatchRequest`
 interface.  Handlers requiring clean up should implment the `IDisposableRequestHandler` interface.  This interface will add the `IDisposable` 
-members to your handler. Invoking the `IDispatchRequest.Dispose()` method will dispose you handler as well if the `IRequestHandler` 
-also implements the `IDisposable` interface.
+members to your handler. Invoking the `IDispatchRequest.Dispose()` method will dispose you handler. 
 ```
-
 public class WeatherForecastHandler : IDisposableRequestHandler
 {
     public async Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content){}
