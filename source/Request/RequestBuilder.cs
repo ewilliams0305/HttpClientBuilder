@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -6,6 +6,8 @@ namespace HttpClientBuilder.Request
 {
     internal sealed class RequestBuilder : IRequestBuilder, IRequestVerb, IResponseType, IRequest
     {
+        private Dictionary<HttpStatusCode, Func<HttpStatusCode, Stream, Task<IRequestResult<TValue>>>? _bodyHandlers;
+
         #region Implementation of IRequestBuilder
 
         /// <inheritdoc />
@@ -47,9 +49,17 @@ namespace HttpClientBuilder.Request
         #region Implementation of IResponseMap
 
         /// <inheritdoc />
-        public IRequest MapResponse<TResponseValue>(Func<HttpStatusCode, TResponseValue> responseTypeMap) where TResponseValue : class
-        {
-            throw new NotImplementedException();
+        public IRequest MapResponse<TResponseValue>(HttpStatusCode code, Func<Content, TResponseValue> responseTypeMap) where TResponseValue : class
+        { 
+            if(_bodyHandlers == null)
+            {
+                _bodyHandlers = new();
+            }
+            if(_bodyHandlers.ContainsKey(code))
+            {
+                throw new Exception("Sttus code already added to pipline");
+            }
+            _bodyHandlers.Add(code, function);
         }
 
         #endregion
@@ -57,9 +67,14 @@ namespace HttpClientBuilder.Request
         #region Implementation of IRequest
 
         /// <inheritdoc />
-        public Task Request()
+        public Task<IRequestResult> Request()
         {
-            throw new NotImplementedException();
+            var response = await _client.Get("");
+            
+            if(_bodyHandler.ContainsKey(response.StatusCode))
+            {
+                var obj = await _bodyHandler[code].Invoke(code);
+            }
         }
 
         #endregion
