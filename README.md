@@ -4,7 +4,7 @@
 ![GitHub](https://img.shields.io/github/license/ewilliams0305/ClientBuilder) 
 ![GitHub all releases](https://img.shields.io/github/downloads/ewilliams0305/ClientBuilder/total) 
 ![Nuget](https://img.shields.io/nuget/dt/HttpClientBuilder)
-![GitHub issues](https://img.shields.io/github/issues/ewilliams0305/ClientBuilder)
+[![GitHub issues](https://img.shields.io/github/issues/ewilliams0305/ClientBuilder)](https://github.com/ewilliams0305/HttpClientBuilder/issues)
 ![GitHub Repo stars](https://img.shields.io/github/stars/ewilliams0305/ClientBuilder?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/ewilliams0305/ClientBuilder?style=social)
 
