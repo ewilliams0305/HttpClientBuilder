@@ -364,19 +364,19 @@ internal sealed partial class HttpBuilderClient
     #region FUNCTIONAL HANDLERS
 
     /// <inheritdoc />
-    public IDispatchHandler CreateGetHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+    public IDispatchHandler CreateGetHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler) =>
         new DispatchFunctionWithoutBody(path, _client.GetAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreatePostHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+    public IDispatchHandler CreatePostHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler) =>
         new DispatchFunctionWithBody(path, _client.PostAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreatePutHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+    public IDispatchHandler CreatePutHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler) =>
         new DispatchFunctionWithBody(path, _client.PostAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreateDeleteHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+    public IDispatchHandler CreateDeleteHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler) =>
         new DispatchFunctionWithoutBody(path, _client.DeleteAsync, handler);
 
     #endregion

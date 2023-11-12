@@ -13,12 +13,12 @@ internal class DispatchFunctionWithoutBody : IDispatchHandler
 {
     private readonly string _path;
     private readonly Func<string, Task<HttpResponseMessage?>> _requestFunc;
-    private readonly Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> _callback;
+    private readonly Func<HttpStatusCode, HttpContent, Task> _callback;
 
     public DispatchFunctionWithoutBody(
         string path, 
         Func<string, Task<HttpResponseMessage?>> requestFunc, 
-        Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> callback)
+        Func<HttpStatusCode, HttpContent, Task> callback)
     {
         _path = path;
         _requestFunc = requestFunc;
@@ -32,7 +32,7 @@ internal class DispatchFunctionWithoutBody : IDispatchHandler
 
         if (response != null)
         {
-            await _callback.Invoke(response.StatusCode, response.Headers, response.Content);
+            await _callback.Invoke(response.StatusCode, response.Content);
         }
     }
 
@@ -51,12 +51,12 @@ internal class DispatchFunctionWithBody : IDispatchHandler
 {
     private readonly string _path;
     private readonly Func<string, HttpContent?, Task<HttpResponseMessage?>> _requestFunc;
-    private readonly Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> _callback;
+    private readonly Func<HttpStatusCode, HttpContent, Task> _callback;
 
     public DispatchFunctionWithBody(
         string path, 
         Func<string, HttpContent?, Task<HttpResponseMessage?>> requestFunc, 
-        Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> callback)
+        Func<HttpStatusCode, HttpContent, Task> callback)
     {
         _path = path;
         _requestFunc = requestFunc;
@@ -70,7 +70,7 @@ internal class DispatchFunctionWithBody : IDispatchHandler
 
         if (response != null)
         {
-            await _callback.Invoke(response.StatusCode, response.Headers, response.Content);
+            await _callback.Invoke(response.StatusCode, response.Content);
         }
     }
 

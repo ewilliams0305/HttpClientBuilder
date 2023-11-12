@@ -29,7 +29,7 @@ namespace HttpClientBuilder.IntegrationTests.HandlerTests
             // Arrange
             var result = 0;
 
-            var dispatch = _client.CreateGetHandler($"status/{code}",  (statusCode, headers, arg3) =>
+            var dispatch = _client.CreateGetHandler($"status/{code}",  (statusCode, content) =>
             {
                 result = (int)statusCode;
                 return Task.CompletedTask;
@@ -58,7 +58,7 @@ namespace HttpClientBuilder.IntegrationTests.HandlerTests
             // Arrange
             var result = 0;
 
-            var dispatch = _client.CreatePostHandler($"status/{code}",  (statusCode, headers, arg3) =>
+            var dispatch = _client.CreatePostHandler($"status/{code}", (statusCode, content) =>
             {
                 result = (int)statusCode;
                 return Task.CompletedTask;
@@ -88,7 +88,7 @@ namespace HttpClientBuilder.IntegrationTests.HandlerTests
             // Arrange
             var result = 0;
 
-            var dispatch = _client.CreatePutHandler($"status/{code}",  (statusCode, headers, arg3) =>
+            var dispatch = _client.CreatePutHandler($"status/{code}", (statusCode, content) =>
             {
                 result = (int)statusCode;
                 return Task.CompletedTask;
@@ -117,7 +117,7 @@ namespace HttpClientBuilder.IntegrationTests.HandlerTests
             // Arrange
             var result = 0;
 
-            var dispatch = _client.CreateDeleteHandler($"status/{code}",  (statusCode, headers, arg3) =>
+            var dispatch = _client.CreateDeleteHandler($"status/{code}", (statusCode, content) =>
             {
                 result = (int)statusCode;
                 return Task.CompletedTask;

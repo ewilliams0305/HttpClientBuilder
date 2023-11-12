@@ -14,9 +14,8 @@ public class PostGenericErrorOrHandlerTests
         _client = factory.GetPrefixedClient();
     }
 
-    [Theory]
-    [InlineData(200)]
-    public async Task Handler_CreatesSuccessObject_WhenRequestIsSuccessful(int code)
+    [Fact]
+    public async Task Handler_CreatesSuccessObject_WhenRequestIsSuccessful()
     {
         // Arrange
         var handler = new TestingErrorOrHandler();

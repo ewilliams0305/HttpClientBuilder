@@ -114,7 +114,7 @@ public interface IDispatchHandlerFactory
     /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
     /// <param name="handler">The handler to handle the HTTP request</param>
     /// <returns>A new dispatcher used to invoke the request to the server.</returns>
-    IDispatchHandler CreateGetHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler);
+    IDispatchHandler CreateGetHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler);
 
     /// <summary>
     /// Creates a new POST request dispatcher.
@@ -122,7 +122,7 @@ public interface IDispatchHandlerFactory
     /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
     /// <param name="handler">The handler to handle the HTTP request</param>
     /// <returns>A new dispatcher used to invoke the request to the server.</returns>
-    IDispatchHandler CreatePostHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler);
+    IDispatchHandler CreatePostHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler);
 
     /// <summary>
     /// Creates a new PUT request dispatcher.
@@ -130,7 +130,7 @@ public interface IDispatchHandlerFactory
     /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
     /// <param name="handler">The handler to handle the HTTP request</param>
     /// <returns>A new dispatcher used to invoke the request to the server.</returns>
-    IDispatchHandler CreatePutHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler);
+    IDispatchHandler CreatePutHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler);
 
     /// <summary>
     /// Creates a new DELETE request dispatcher.
@@ -138,7 +138,7 @@ public interface IDispatchHandlerFactory
     /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
     /// <param name="handler">The handler to handle the HTTP request</param>
     /// <returns>A new dispatcher used to invoke the request to the server.</returns>
-    IDispatchHandler CreateDeleteHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler);
+    IDispatchHandler CreateDeleteHandler(string path, Func<HttpStatusCode, HttpContent, Task> handler);
 
 
 }
