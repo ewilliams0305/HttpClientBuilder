@@ -24,7 +24,7 @@ internal sealed partial class HttpBuilderClient
             var response = await _client.GetAsync(path, cancellationToken).ConfigureAwait(false);
 
             return response.IsSuccessStatusCode
-                ? new Response(response.StatusCode)
+                ? new Response(response.StatusCode, response.Headers)
                 : new Response(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
@@ -48,14 +48,14 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new EmptyBodyResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = context == null
@@ -63,7 +63,7 @@ internal sealed partial class HttpBuilderClient
                 : await DeserializeType<TSuccessType>(content, context, cancellationToken);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
                 : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
@@ -91,14 +91,14 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var result = createResultFromContent.Invoke(response.StatusCode, response.Content);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
-                : new RequestResult<TSuccessType>(response.StatusCode, new DeserializedResponseException(response.StatusCode));
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
@@ -124,14 +124,14 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var result = await createResultFromContentAsync.Invoke(response.StatusCode, response.Content).ConfigureAwait(false);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
-                : new RequestResult<TSuccessType>(response.StatusCode, new DeserializedResponseException(response.StatusCode));
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
@@ -158,19 +158,19 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new EmptyBodyResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
             var result = createResultFromBytes.Invoke(response.StatusCode, content);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
                 : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
@@ -198,20 +198,20 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new EmptyBodyResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = await createResultFromBytesAsync.Invoke(response.StatusCode, content).ConfigureAwait(false);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
                 : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
@@ -239,20 +239,20 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new EmptyBodyResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = createResultFromStream.Invoke(response.StatusCode, content);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
                 : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
@@ -280,19 +280,19 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new HttpRequestResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, new EmptyBodyResponseException(response.StatusCode));
+                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = await createResultFromStreamAsync.Invoke(response.StatusCode, content);
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, result!)
+                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
                 : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
 
         }

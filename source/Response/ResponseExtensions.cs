@@ -167,11 +167,11 @@ namespace HttpClientBuilder
 
             if (!resultFromTask.Success)
             {
-                error?.Invoke(resultFromTask.Error!);
+                await errorAsync.Invoke(resultFromTask.Error!);
                 return resultFromTask;
             }
 
-            value?.Invoke((HttpStatusCode)resultFromTask.StatusCode!, resultFromTask.Value!);
+            await valueAsync.Invoke((HttpStatusCode)resultFromTask.StatusCode!, resultFromTask.Value!);
             return resultFromTask;
         }
     }

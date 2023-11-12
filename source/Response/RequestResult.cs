@@ -39,7 +39,7 @@ namespace HttpClientBuilder
         /// </summary>
         /// <param name="code">Http Status Code</param>
         /// <param name="headers">Http response headers returned from the server</param>
-        public Response(HttpStatusCode code, HttpResponseHeaders headers)
+        public Response(HttpStatusCode code, HttpResponseHeaders? headers)
         {
             Status = ResponseState.Success;
             StatusCode = code;
@@ -117,13 +117,28 @@ namespace HttpClientBuilder
         /// <param name="code">Http Status Code</param>
         /// <param name="headers">Http Response headers</param>
         /// <param name="value">Value Stored in the Result.</param>
-        public RequestResult(HttpStatusCode code, HttpResponseHeaders headers, TSuccessValue value)
+        public RequestResult(HttpStatusCode code, HttpResponseHeaders? headers, TSuccessValue value)
         {
             Status = ResponseState.Success;
             StatusCode = code;
             Headers = headers;
             Value = value;
             Error = null;
+        }
+
+        /// <summary>
+        /// Creates a new failed result.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="headers"></param>
+        /// <param name="error">The reason the failure occurred.</param>
+        public RequestResult(HttpStatusCode code, HttpResponseHeaders? headers, Exception error)
+        {
+            Status = ResponseState.HttpStatusError;
+            StatusCode = code;
+            Headers = headers;
+            Value = default;
+            Error = error;
         }
 
         /// <summary>
@@ -139,19 +154,7 @@ namespace HttpClientBuilder
             Error = error;
         }
 
-        /// <summary>
-        /// Creates a new failed result.
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(HttpStatusCode code, Exception error)
-        {
-            Status = ResponseState.HttpStatusError;
-            StatusCode = code;
-            Headers = null;
-            Value = default;
-            Error = error;
-        }
+        
 
         public static implicit operator bool(RequestResult<TSuccessValue> result) => result.Success;
         public static implicit operator TSuccessValue?(RequestResult<TSuccessValue> result) => result.Value;
