@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace HttpClientBuilder.Request;
+namespace HttpClientBuilder;
 
 /// <summary>
 /// Maps a status code to a result object type

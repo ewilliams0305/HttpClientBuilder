@@ -2,6 +2,7 @@
 
 using System;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace HttpClientBuilder
 {
@@ -11,6 +12,9 @@ namespace HttpClientBuilder
     public readonly struct Response: IResponse
     {
         #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public HttpResponseHeaders? Headers { get; }
 
         /// <inheritdoc />
         public ResponseState Status { get; }
@@ -34,10 +38,12 @@ namespace HttpClientBuilder
         /// Creates a new successful result.
         /// </summary>
         /// <param name="code">Http Status Code</param>
-        public Response(HttpStatusCode code)
+        /// <param name="headers">Http response headers returned from the server</param>
+        public Response(HttpStatusCode code, HttpResponseHeaders? headers)
         {
             Status = ResponseState.Success;
             StatusCode = code;
+            Headers = headers;
             Error = null;
         }
 
@@ -49,6 +55,7 @@ namespace HttpClientBuilder
         {
             Status = ResponseState.Exception;
             StatusCode = null;
+            Headers = null;
             Error = error;
         }
 
@@ -61,6 +68,7 @@ namespace HttpClientBuilder
         {
             Status = ResponseState.HttpStatusError;
             StatusCode = code;
+            Headers = null;
             Error = error;
         }
 
@@ -68,16 +76,19 @@ namespace HttpClientBuilder
         public static implicit operator HttpStatusCode?(Response result) => result.StatusCode;
 
         public static implicit operator Response(Exception exception) => new (exception);
-        public static implicit operator Response?(HttpStatusCode code) => new (code);
+
     }
     
     /// <summary>
     /// The default implementation of the <seealso cref="IResponse{TSuccessValue}"/>
     /// </summary>
     /// <typeparam name="TSuccessValue">Type of object stored in the response.</typeparam>
-    public readonly struct RequestResult<TSuccessValue> : IResponse<TSuccessValue> where TSuccessValue : class
+    public readonly struct Response<TSuccessValue> : IResponse<TSuccessValue> where TSuccessValue : class
     {
         #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public HttpResponseHeaders? Headers { get; }
 
         /// <inheritdoc />
         public ResponseState Status { get; }
@@ -104,11 +115,13 @@ namespace HttpClientBuilder
         /// Creates a new successful result.
         /// </summary>
         /// <param name="code">Http Status Code</param>
+        /// <param name="headers">Http Response headers</param>
         /// <param name="value">Value Stored in the Result.</param>
-        public RequestResult(HttpStatusCode code, TSuccessValue value)
+        public Response(HttpStatusCode code, HttpResponseHeaders? headers, TSuccessValue value)
         {
             Status = ResponseState.Success;
             StatusCode = code;
+            Headers = headers;
             Value = value;
             Error = null;
         }
@@ -116,11 +129,14 @@ namespace HttpClientBuilder
         /// <summary>
         /// Creates a new failed result.
         /// </summary>
+        /// <param name="code"></param>
+        /// <param name="headers"></param>
         /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(Exception error)
+        public Response(HttpStatusCode code, HttpResponseHeaders? headers, Exception error)
         {
-            Status = ResponseState.Exception;
-            StatusCode = null;
+            Status = ResponseState.HttpStatusError;
+            StatusCode = code;
+            Headers = headers;
             Value = default;
             Error = error;
         }
@@ -128,21 +144,21 @@ namespace HttpClientBuilder
         /// <summary>
         /// Creates a new failed result.
         /// </summary>
-        /// <param name="code"></param>
         /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(HttpStatusCode code, Exception error)
+        public Response(Exception error)
         {
-            Status = ResponseState.HttpStatusError;
-            StatusCode = code;
+            Status = ResponseState.Exception;
+            Headers = null;
+            StatusCode = null;
             Value = default;
             Error = error;
         }
 
-        public static implicit operator bool(RequestResult<TSuccessValue> result) => result.Success;
-        public static implicit operator TSuccessValue?(RequestResult<TSuccessValue> result) => result.Value;
-        public static implicit operator Exception?(RequestResult<TSuccessValue> result) => result.Error;
+        
 
-        public static implicit operator RequestResult<TSuccessValue>(TSuccessValue value) => new(HttpStatusCode.OK, value);
-        public static implicit operator RequestResult<TSuccessValue>(Exception exception) => new(exception);
+        public static implicit operator bool(Response<TSuccessValue> result) => result.Success;
+        public static implicit operator TSuccessValue?(Response<TSuccessValue> result) => result.Value;
+        public static implicit operator Exception?(Response<TSuccessValue> result) => result.Error;
+        public static implicit operator Response<TSuccessValue>(Exception exception) => new(exception);
     }
 }

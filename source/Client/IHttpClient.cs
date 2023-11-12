@@ -1,5 +1,4 @@
-﻿using HttpClientBuilder.Request;
-using System;
+﻿using System;
 using System.Net.Http.Headers;
 
 namespace HttpClientBuilder;
@@ -7,7 +6,7 @@ namespace HttpClientBuilder;
 /// <summary>
 /// 
 /// </summary>
-public interface IHttpClient : IHttpGetRequests, IDispatchHandlerFactory, IDisposable
+public interface IHttpClient : IHttpGetRequests, IHttpPostRequests, IDispatchHandlerFactory, IDisposable
 {
     /// <summary>
     /// Provides readonly access to the URI built bby the <seealso cref="IClientBuilder"/> pipeline.

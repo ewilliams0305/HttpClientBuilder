@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using HttpClientBuilder.Requests;
 
 namespace HttpClientBuilder.Examples
 {
@@ -25,7 +24,7 @@ namespace HttpClientBuilder.Examples
                     predicate: (weather) => weather.IsNice && weather.Temperature > 60,
                     errorFactory: () => new Exception("THE WEATHER IS NOT NICE"))
                 .HandleAsync(
-                    value: (code, weather) =>
+                    value: (code, headers, weather) =>
                     {
                         //PROCESS WEATHER ONLY IF THE WEATHER IS NICE AND GREATER THAN 60
                     },
@@ -34,9 +33,9 @@ namespace HttpClientBuilder.Examples
                         //PROCESS ERROR ONLY IF THE REQUEST FAILED OR THE WEATHER IS NOT NICE
                     });
 
-            var getWeatherRequest = client.AddGetHandler("forecast", new WeatherForecastHandler());
-            var getSnowRequest = client.AddGetHandler("snow", new WeatherForecastHandler());
-            var getRainRequest = client.AddGetHandler("rain", new WeatherForecastHandler());
+            var getWeatherRequest = client.CreateGetHandler("forecast", new WeatherForecastHandler());
+            var getSnowRequest = client.CreateGetHandler("snow", new WeatherForecastHandler());
+            var getRainRequest = client.CreateGetHandler("rain", new WeatherForecastHandler());
 
             await Task.WhenAll(
                 getRainRequest.DispatchAsync(), 
@@ -59,9 +58,9 @@ namespace HttpClientBuilder.Examples
             // Provide a path and passing an IRequestHandler
             // Your handles could certainly be coming from a DI container
 
-            var getWeatherRequest = client.AddGetHandler("forecast", new WeatherForecastHandler());
-            var getSnowRequest = client.AddPostHandler("snow", new WeatherForecastHandler());
-            var getRainRequest = client.AddGetHandler("rain", new WeatherForecastHandler());
+            var getWeatherRequest = client.CreateGetHandler("forecast", new WeatherForecastHandler());
+            var getSnowRequest = client.CreatePostHandler("snow", new WeatherForecastHandler());
+            var getRainRequest = client.CreateGetHandler("rain", new WeatherForecastHandler());
 
             // Await the DispatchAsync method on the handle.
             // You can optionally pass HTTP content into the function to send as the body of your request.
@@ -72,7 +71,7 @@ namespace HttpClientBuilder.Examples
                 getWeatherRequest.DispatchAsync());
 
             // You can also create a life cycle request.
-            using var getUglyDWeather = client.AddGetHandler("ugly", new WeatherForecastHandler());
+            using var getUglyDWeather = client.CreateGetHandler("ugly", new WeatherForecastHandler());
             await getUglyDWeather.DispatchAsync();
 
             // Your IDispatch instance will now be disposed

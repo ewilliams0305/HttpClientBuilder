@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>Eric Williams</Authors>
     <Company>evvillian</Company>
     <LangVersion>10</LangVersion>
@@ -27,6 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Examples\BuilderExamples.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\docs\http_logo.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -43,10 +49,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Text.Json" Version="7.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Examples\BuilderExamples.cs" />
   </ItemGroup>
 
 </Project>
