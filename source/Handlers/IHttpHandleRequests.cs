@@ -36,4 +36,68 @@ public interface IDispatchHandlerFactory
     /// <param name="handler">The handler to handle the HTTP request</param>
     /// <returns>A new dispatcher used to invoke the request to the server.</returns>
     IDispatchHandler CreateDeleteHandler(string path, IRequestHandler handler);
+    
+    /// <summary>
+    /// Creates a new GET request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreateGetHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler);
+
+    /// <summary>
+    /// Creates a new POST request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreatePostHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler);
+
+    /// <summary>
+    /// Creates a new PUT request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreatePutHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler);
+
+    /// <summary>
+    /// Creates a new DELETE request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreateDeleteHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler);
+    
+    /// <summary>
+    /// Creates a new GET request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreateGetHandler<TResponseBody, TErrorBody>(string path, IRequestHandler<TResponseBody, TErrorBody> handler);
+
+    /// <summary>
+    /// Creates a new POST request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreatePostHandler<TResponseBody, TErrorBody>(string path, IRequestHandler<TResponseBody, TErrorBody> handler);
+
+    /// <summary>
+    /// Creates a new PUT request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreatePutHandler<TResponseBody, TErrorBody>(string path, IRequestHandler<TResponseBody, TErrorBody> handler);
+
+    /// <summary>
+    /// Creates a new DELETE request dispatcher.
+    /// </summary>
+    /// <param name="path">The path appended to the base <seealso cref="IHttpClient"/> default request URL</param>
+    /// <param name="handler">The handler to handle the HTTP request</param>
+    /// <returns>A new dispatcher used to invoke the request to the server.</returns>
+    IDispatchHandler CreateDeleteHandler<TResponseBody, TErrorBody>(string path, IRequestHandler<TResponseBody, TErrorBody> handler);
 }
