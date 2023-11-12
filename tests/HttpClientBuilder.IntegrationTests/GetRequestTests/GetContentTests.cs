@@ -203,7 +203,7 @@ namespace HttpClientBuilder.IntegrationTests.GetRequestTests
             // Arrange
 
             // Act
-            var result = await _client.GetContentFromJsonAsync<Utils.WeatherForecast>("badrequest");
+            var result = await _client.GetContentFromJsonAsync<Utils.WeatherForecast>("/errors/400");
 
             // Assert
             result.Should().NotBeNull();
