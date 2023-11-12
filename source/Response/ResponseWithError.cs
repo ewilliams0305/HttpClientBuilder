@@ -66,12 +66,13 @@ public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse
     /// Creates a new error result.
     /// </summary>
     /// <param name="code">Http Status Code</param>
+    /// <param name="headers"></param>
     /// <param name="errorValue">Value Stored in the Result.</param>
-    public ResponseWithError(HttpStatusCode code, TErrorValue errorValue)
+    public ResponseWithError(HttpStatusCode code, HttpResponseHeaders headers, TErrorValue errorValue)
     {
         Status = ResponseState.HttpStatusError;
         StatusCode = code;
-        Headers = null;
+        Headers = headers;
         Value = default;
         ErrorValue = errorValue;
         Error = null;
@@ -95,6 +96,5 @@ public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse
     public static implicit operator TSuccessValue?(ResponseWithError<TSuccessValue, TErrorValue> result) => result.Value;
     public static implicit operator TErrorValue?(ResponseWithError<TSuccessValue, TErrorValue> result) => result.ErrorValue;
     public static implicit operator Exception?(ResponseWithError<TSuccessValue, TErrorValue> result) => result.Error;
-    public static implicit operator ResponseWithError<TSuccessValue, TErrorValue>(TErrorValue value) => new(HttpStatusCode.BadRequest, value);
     public static implicit operator ResponseWithError<TSuccessValue, TErrorValue>(Exception exception) => new(exception);
 }

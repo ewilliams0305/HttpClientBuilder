@@ -1,47 +1,161 @@
-﻿namespace HttpClientBuilder;
+﻿using System;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading;
+
+namespace HttpClientBuilder;
 
 internal sealed partial class HttpBuilderClient
 {
     #region Implementation of IHttpHandleRequests
 
     /// <inheritdoc />
-    public IDispatchHandler CreateGetHandler(string path, IRequestHandler handler) => new DispatchHandlerWithoutBody(path, _client.GetAsync, handler);
+    public IDispatchHandler CreateGetHandler(string path, IRequestHandler handler) => new DispatchHandlerWithoutBody(RemoveSlashes(path), _client.GetAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreatePostHandler(string path, IRequestHandler handler) => new DispatchHandlerWithBody(path, _client.PostAsync, handler);
+    public IDispatchHandler CreatePostHandler(string path, IRequestHandler handler) => new DispatchHandlerWithBody(RemoveSlashes(path), _client.PostAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreatePutHandler(string path, IRequestHandler handler) => new DispatchHandlerWithBody(path, _client.PutAsync, handler);
+    public IDispatchHandler CreatePutHandler(string path, IRequestHandler handler) => new DispatchHandlerWithBody(RemoveSlashes(path), _client.PutAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreateDeleteHandler(string path, IRequestHandler handler) => new DispatchHandlerWithoutBody(path, _client.DeleteAsync, handler);
+    public IDispatchHandler CreateDeleteHandler(string path, IRequestHandler handler) => new DispatchHandlerWithoutBody(RemoveSlashes(path), _client.DeleteAsync, handler);
 
     /// <inheritdoc />
-    public IDispatchHandler CreateGetHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler) 
-        where TResponseBody : class
-    {
-        throw new System.NotImplementedException();
-    }
+    public IDispatchHandler CreateGetHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler)
+        where TResponseBody : class =>
+        new DispatchHandlerWithoutBody<TResponseBody>(path, async (p) => await GetContentFromJsonAsync<TResponseBody>(RemoveSlashes(p)), handler);
 
     /// <inheritdoc />
     public IDispatchHandler CreatePostHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler) 
         where TResponseBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithBody<TResponseBody>(path, async (p, c) =>
+        {
+            try
+            {
+                var response = await _client.PostAsync(RemoveSlashes(p), c).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                }
+
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                var result =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return result != null
+                    ? new RequestResult<TResponseBody>(response.StatusCode, response.Headers, result)
+                    : new RequestResult<TResponseBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new RequestResult<TResponseBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new RequestResult<TResponseBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new RequestResult<TResponseBody>(jsonException);
+            }
+        }, handler);
     }
 
     /// <inheritdoc />
     public IDispatchHandler CreatePutHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler) 
         where TResponseBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithBody<TResponseBody>(path, async (p, c) =>
+        {
+            try
+            {
+                var response = await _client.PutAsync(RemoveSlashes(p), c).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                }
+
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                var result =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return result != null
+                    ? new RequestResult<TResponseBody>(response.StatusCode, response.Headers, result)
+                    : new RequestResult<TResponseBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new RequestResult<TResponseBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new RequestResult<TResponseBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new RequestResult<TResponseBody>(jsonException);
+            }
+        }, handler);
     }
 
     /// <inheritdoc />
     public IDispatchHandler CreateDeleteHandler<TResponseBody>(string path, IRequestHandler<TResponseBody> handler) 
         where TResponseBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithoutBody<TResponseBody>(path, async (p) =>
+        {
+            try
+            {
+                var response = await _client.DeleteAsync(RemoveSlashes(p)).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                }
+
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                var result =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return result != null
+                    ? new RequestResult<TResponseBody>(response.StatusCode, response.Headers, result)
+                    : new RequestResult<TResponseBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new RequestResult<TResponseBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new RequestResult<TResponseBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new RequestResult<TResponseBody>(jsonException);
+            }
+        }, handler);
     }
 
     /// <inheritdoc />
@@ -49,7 +163,48 @@ internal sealed partial class HttpBuilderClient
         where TResponseBody : class
         where TErrorBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithoutBody<TResponseBody, TErrorBody>(path, async (p) =>
+        {
+            try
+            {
+                var response = await _client.GetAsync(RemoveSlashes(p)).ConfigureAwait(false);
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody =
+                        await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                    return errorBody != null
+                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                }
+
+                var successBody =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return successBody != null
+                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+            }
+        }, handler);
     }
 
     /// <inheritdoc />
@@ -57,7 +212,48 @@ internal sealed partial class HttpBuilderClient
         where TResponseBody : class
         where TErrorBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithBody<TResponseBody, TErrorBody>(path, async (p, c) =>
+        {
+            try
+            {
+                var response = await _client.PostAsync(RemoveSlashes(p), c).ConfigureAwait(false);
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody =
+                        await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                    return errorBody != null
+                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                }
+
+                var successBody =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return successBody != null
+                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+            }
+        }, handler);
     }
 
     /// <inheritdoc />
@@ -65,7 +261,48 @@ internal sealed partial class HttpBuilderClient
         where TResponseBody : class
         where TErrorBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithBody<TResponseBody, TErrorBody>(path, async ( p, c) =>
+        {
+            try
+            {
+                var response = await _client.PutAsync(RemoveSlashes(p), c).ConfigureAwait(false);
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody =
+                        await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                    return errorBody != null
+                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                }
+
+                var successBody =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return successBody != null
+                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+            }
+        }, handler);
     }
 
     /// <inheritdoc />
@@ -73,7 +310,48 @@ internal sealed partial class HttpBuilderClient
         where TResponseBody : class
         where TErrorBody : class
 	{
-        throw new System.NotImplementedException();
+        return new DispatchHandlerWithoutBody<TResponseBody, TErrorBody>(path, async (p) =>
+        {
+            try
+            {
+                var response = await _client.DeleteAsync(RemoveSlashes(p)).ConfigureAwait(false);
+                var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                if (content == null)
+                {
+                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody =
+                        await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                    return errorBody != null
+                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                }
+
+                var successBody =
+                    await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return successBody != null
+                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+            }
+            catch (ArgumentException argumentException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+            }
+            catch (HttpRequestException requestException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+            }
+            catch (JsonException jsonException)
+            {
+                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+            }
+        }, handler);
     }
 
     #endregion
