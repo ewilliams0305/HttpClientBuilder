@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace HttpClientBuilder.Request;
+namespace HttpClientBuilder;
 
 /// <summary>
 /// Maps an exception to a type.

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace HttpClientBuilder.Request;
+namespace HttpClientBuilder;
 
 /// <summary>
 /// Dispatches the Http Request Pipeline

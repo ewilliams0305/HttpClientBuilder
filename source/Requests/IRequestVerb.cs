@@ -1,4 +1,4 @@
-﻿namespace HttpClientBuilder.Request;
+﻿namespace HttpClientBuilder;
 
 /// <summary>
 /// Specifies the request verb
