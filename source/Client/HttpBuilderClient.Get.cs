@@ -81,6 +81,51 @@ internal sealed partial class HttpBuilderClient
     }
 
     /// <inheritdoc />
+    public async Task<IResponse<TSuccessBody, TErrorBody>> GetContentFromJsonAsync<TSuccessBody, TErrorBody>(string route = "",
+        CancellationToken cancellationToken = default) where TSuccessBody : class where TErrorBody : class
+    {
+        try
+        {
+            var response = await _client.GetAsync(RemoveSlashes(route), cancellationToken).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+            if (content == null)
+            {
+                return new ResponseWithError<TSuccessBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody =
+                    await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+                return errorBody != null
+                    ? new ResponseWithError<TSuccessBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                    : new ResponseWithError<TSuccessBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+            }
+
+            var successBody =
+                await DeserializeType<TSuccessBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
+
+            return successBody != null
+                ? new ResponseWithError<TSuccessBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                : new ResponseWithError<TSuccessBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+        }
+        catch (ArgumentException argumentException)
+        {
+            return new ResponseWithError<TSuccessBody, TErrorBody>(argumentException);
+        }
+        catch (HttpRequestException requestException)
+        {
+            return new ResponseWithError<TSuccessBody, TErrorBody>(requestException);
+        }
+        catch (JsonException jsonException)
+        {
+            return new ResponseWithError<TSuccessBody, TErrorBody>(jsonException);
+        }
+    }
+
+    /// <inheritdoc />
     public async Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, HttpContent, TSuccessType?> createResultFromContent, CancellationToken cancellationToken = default) where TSuccessType : class
     {
         var path = RemoveSlashes(route);

@@ -25,10 +25,20 @@ public interface IHttpGetRequests
     /// Executes a GET request asynchronously at the specified route and deserializes the content as the specified return type. 
     /// </summary>
     /// <param name="route">The specified route will be appended to the <seealso cref="IClientBuilder"/> default request <seealso cref="Uri"/></param>
-    /// <param name="context"></param>
+    /// <param name="context">Optional JSON Deserializer context to leverage source generated deserializers.</param>
     /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
     /// <returns>Result of the executed request</returns>
     Task<IResponse<TSuccessType>> GetContentFromJsonAsync<TSuccessType>(string route = "", JsonSerializerContext? context = null, CancellationToken cancellationToken = default) where TSuccessType : class;
+
+    /// <summary>
+    /// Executes a GET request asynchronously at the specified route and deserializes the content as the specified return type. 
+    /// </summary>
+    /// <param name="route">The specified route will be appended to the <seealso cref="IClientBuilder"/> default request <seealso cref="Uri"/></param>
+    /// <param name="cancellationToken">Optional cancellation token to stop a request in-flight.</param>
+    /// <returns>Result of the executed request</returns>
+    Task<IResponse<TSuccessBody, TErrorBody>> GetContentFromJsonAsync<TSuccessBody, TErrorBody>(string route = "", CancellationToken cancellationToken = default) 
+        where TSuccessBody : class 
+        where TErrorBody : class ;
 
     /// <summary>
     /// Executes a GET request asynchronously at the specified route.
@@ -84,3 +94,4 @@ public interface IHttpGetRequests
     /// <returns>Result of the executed request</returns>
     Task<IResponse<TSuccessType>> GetContentAsync<TSuccessType>(string route, Func<HttpStatusCode, Stream, Task<TSuccessType?>> createResultFromStreamAsync, CancellationToken cancellationToken = default) where TSuccessType : class;
 }
+
