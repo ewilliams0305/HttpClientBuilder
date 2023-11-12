@@ -32,3 +32,16 @@ jobs:
 
     - name: Run Integration Tests
       run: dotnet test tests/HttpClientBuilder.IntegrationTests/HttpClientBuilder.IntegrationTests.csproj --no-build --verbosity normal
+
+    - name: Build and Pack
+      run: |
+        dotnet build -c Release
+        dotnet pack -c Release --no-build -o ./artifacts
+
+    - name: Publish NuGet Package
+      uses: nuget/publish@v2
+      with:
+        nuget-api-key: ${{ secrets.NUGET_API_KEY }}  # Define the secret in your repository settings
+        nuget-version: 4.x
+        feed-url: https://api.nuget.org/v3/index.json
+        package: './artifacts/*.nupkg'
