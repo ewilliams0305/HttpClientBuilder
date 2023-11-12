@@ -83,7 +83,7 @@ namespace HttpClientBuilder
     /// The default implementation of the <seealso cref="IResponse{TSuccessValue}"/>
     /// </summary>
     /// <typeparam name="TSuccessValue">Type of object stored in the response.</typeparam>
-    public readonly struct RequestResult<TSuccessValue> : IResponse<TSuccessValue> where TSuccessValue : class
+    public readonly struct Response<TSuccessValue> : IResponse<TSuccessValue> where TSuccessValue : class
     {
         #region Implementation of IResponseCode
 
@@ -117,7 +117,7 @@ namespace HttpClientBuilder
         /// <param name="code">Http Status Code</param>
         /// <param name="headers">Http Response headers</param>
         /// <param name="value">Value Stored in the Result.</param>
-        public RequestResult(HttpStatusCode code, HttpResponseHeaders? headers, TSuccessValue value)
+        public Response(HttpStatusCode code, HttpResponseHeaders? headers, TSuccessValue value)
         {
             Status = ResponseState.Success;
             StatusCode = code;
@@ -132,7 +132,7 @@ namespace HttpClientBuilder
         /// <param name="code"></param>
         /// <param name="headers"></param>
         /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(HttpStatusCode code, HttpResponseHeaders? headers, Exception error)
+        public Response(HttpStatusCode code, HttpResponseHeaders? headers, Exception error)
         {
             Status = ResponseState.HttpStatusError;
             StatusCode = code;
@@ -145,7 +145,7 @@ namespace HttpClientBuilder
         /// Creates a new failed result.
         /// </summary>
         /// <param name="error">The reason the failure occurred.</param>
-        public RequestResult(Exception error)
+        public Response(Exception error)
         {
             Status = ResponseState.Exception;
             Headers = null;
@@ -156,9 +156,9 @@ namespace HttpClientBuilder
 
         
 
-        public static implicit operator bool(RequestResult<TSuccessValue> result) => result.Success;
-        public static implicit operator TSuccessValue?(RequestResult<TSuccessValue> result) => result.Value;
-        public static implicit operator Exception?(RequestResult<TSuccessValue> result) => result.Error;
-        public static implicit operator RequestResult<TSuccessValue>(Exception exception) => new(exception);
+        public static implicit operator bool(Response<TSuccessValue> result) => result.Success;
+        public static implicit operator TSuccessValue?(Response<TSuccessValue> result) => result.Value;
+        public static implicit operator Exception?(Response<TSuccessValue> result) => result.Error;
+        public static implicit operator Response<TSuccessValue>(Exception exception) => new(exception);
     }
 }

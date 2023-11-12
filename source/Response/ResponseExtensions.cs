@@ -36,8 +36,8 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null
-                ? new RequestResult<TValue>(errorFactory.Invoke())
-                : new RequestResult<TValue>(new RequestResultException($"{nameof(Ensure)} Failed processing predicate value of response"));
+                ? new Response<TValue>(errorFactory.Invoke())
+                : new Response<TValue>(new RequestResultException($"{nameof(Ensure)} Failed processing predicate value of response"));
         }
 
         /// <summary>
@@ -68,8 +68,8 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null 
-                ? new RequestResult<TValue>(errorFactory.Invoke()) 
-                : new RequestResult<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing predicate value of response"));
+                ? new Response<TValue>(errorFactory.Invoke()) 
+                : new Response<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing predicate value of response"));
         }
         
         
@@ -102,8 +102,8 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null 
-                ? new RequestResult<TValue>(errorFactory.Invoke()) 
-                : new RequestResult<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing predicate value of response"));
+                ? new Response<TValue>(errorFactory.Invoke()) 
+                : new Response<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing predicate value of response"));
         }
 
         /// <summary>
@@ -132,8 +132,8 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null
-                ? new RequestResult<TValue>(errorFactory.Invoke())
-                : new RequestResult<TValue>(new RequestResultException($"{nameof(Ensure)} Failed processing headers predicate"));
+                ? new Response<TValue>(errorFactory.Invoke())
+                : new Response<TValue>(new RequestResultException($"{nameof(Ensure)} Failed processing headers predicate"));
         }
 
         /// <summary>
@@ -164,8 +164,8 @@ namespace HttpClientBuilder
             }
 
             return errorFactory != null
-                ? new RequestResult<TValue>(errorFactory.Invoke())
-                : new RequestResult<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing headers predicate"));
+                ? new Response<TValue>(errorFactory.Invoke())
+                : new Response<TValue>(new RequestResultException($"{nameof(EnsureAsync)} Failed processing headers predicate"));
         }
 
 
@@ -198,7 +198,7 @@ namespace HttpClientBuilder
             }
             catch (Exception e)
             {
-                return new RequestResult<TValue>(e);
+                return new Response<TValue>(e);
             }
         }
 
@@ -233,7 +233,7 @@ namespace HttpClientBuilder
             }
             catch (Exception e)
             {
-                return new RequestResult<TValue>(e);
+                return new Response<TValue>(e);
             }
         }
 
@@ -268,7 +268,7 @@ namespace HttpClientBuilder
             }
             catch (Exception e)
             {
-                return new RequestResult<TValue>(e);
+                return new Response<TValue>(e);
             }
         }
         
@@ -303,7 +303,7 @@ namespace HttpClientBuilder
             }
             catch (Exception e)
             {
-                return new RequestResult<TValue>(e);
+                return new Response<TValue>(e);
             }
         }
     }

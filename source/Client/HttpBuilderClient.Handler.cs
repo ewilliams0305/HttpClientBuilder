@@ -38,34 +38,34 @@ internal sealed partial class HttpBuilderClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                    return new Response<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
                 }
 
                 var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                 if (content == null)
                 {
-                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 var result =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return result != null
-                    ? new RequestResult<TResponseBody>(response.StatusCode, response.Headers, result)
-                    : new RequestResult<TResponseBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody>(response.StatusCode, response.Headers, result)
+                    : new Response<TResponseBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new RequestResult<TResponseBody>(argumentException);
+                return new Response<TResponseBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new RequestResult<TResponseBody>(requestException);
+                return new Response<TResponseBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new RequestResult<TResponseBody>(jsonException);
+                return new Response<TResponseBody>(jsonException);
             }
         }, handler);
     }
@@ -82,34 +82,34 @@ internal sealed partial class HttpBuilderClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                    return new Response<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
                 }
 
                 var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                 if (content == null)
                 {
-                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 var result =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return result != null
-                    ? new RequestResult<TResponseBody>(response.StatusCode, response.Headers, result)
-                    : new RequestResult<TResponseBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody>(response.StatusCode, response.Headers, result)
+                    : new Response<TResponseBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new RequestResult<TResponseBody>(argumentException);
+                return new Response<TResponseBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new RequestResult<TResponseBody>(requestException);
+                return new Response<TResponseBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new RequestResult<TResponseBody>(jsonException);
+                return new Response<TResponseBody>(jsonException);
             }
         }, handler);
     }
@@ -126,34 +126,34 @@ internal sealed partial class HttpBuilderClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                    return new Response<TResponseBody>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
                 }
 
                 var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
                 if (content == null)
                 {
-                    return new RequestResult<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 var result =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return result != null
-                    ? new RequestResult<TResponseBody>(response.StatusCode, response.Headers, result)
-                    : new RequestResult<TResponseBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody>(response.StatusCode, response.Headers, result)
+                    : new Response<TResponseBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new RequestResult<TResponseBody>(argumentException);
+                return new Response<TResponseBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new RequestResult<TResponseBody>(requestException);
+                return new Response<TResponseBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new RequestResult<TResponseBody>(jsonException);
+                return new Response<TResponseBody>(jsonException);
             }
         }, handler);
     }
@@ -172,7 +172,7 @@ internal sealed partial class HttpBuilderClient
 
                 if (content == null)
                 {
-                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 if (!response.IsSuccessStatusCode)
@@ -181,28 +181,28 @@ internal sealed partial class HttpBuilderClient
                         await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                     return errorBody != null
-                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
-                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                        ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
                 }
 
                 var successBody =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return successBody != null
-                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
-                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+                return new Response<TResponseBody, TErrorBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+                return new Response<TResponseBody, TErrorBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+                return new Response<TResponseBody, TErrorBody>(jsonException);
             }
         }, handler);
     }
@@ -221,7 +221,7 @@ internal sealed partial class HttpBuilderClient
 
                 if (content == null)
                 {
-                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 if (!response.IsSuccessStatusCode)
@@ -230,28 +230,28 @@ internal sealed partial class HttpBuilderClient
                         await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                     return errorBody != null
-                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
-                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                        ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
                 }
 
                 var successBody =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return successBody != null
-                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
-                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+                return new Response<TResponseBody, TErrorBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+                return new Response<TResponseBody, TErrorBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+                return new Response<TResponseBody, TErrorBody>(jsonException);
             }
         }, handler);
     }
@@ -270,7 +270,7 @@ internal sealed partial class HttpBuilderClient
 
                 if (content == null)
                 {
-                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 if (!response.IsSuccessStatusCode)
@@ -279,28 +279,28 @@ internal sealed partial class HttpBuilderClient
                         await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                     return errorBody != null
-                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
-                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                        ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
                 }
 
                 var successBody =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return successBody != null
-                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
-                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+                return new Response<TResponseBody, TErrorBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+                return new Response<TResponseBody, TErrorBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+                return new Response<TResponseBody, TErrorBody>(jsonException);
             }
         }, handler);
     }
@@ -319,7 +319,7 @@ internal sealed partial class HttpBuilderClient
 
                 if (content == null)
                 {
-                    return new ResponseWithError<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                    return new Response<TResponseBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
                 }
 
                 if (!response.IsSuccessStatusCode)
@@ -328,28 +328,28 @@ internal sealed partial class HttpBuilderClient
                         await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                     return errorBody != null
-                        ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
-                        : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                        ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                        : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
                 }
 
                 var successBody =
                     await DeserializeType<TResponseBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return successBody != null
-                    ? new ResponseWithError<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
-                    : new ResponseWithError<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TResponseBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                    : new Response<TResponseBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
             }
             catch (ArgumentException argumentException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(argumentException);
+                return new Response<TResponseBody, TErrorBody>(argumentException);
             }
             catch (HttpRequestException requestException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(requestException);
+                return new Response<TResponseBody, TErrorBody>(requestException);
             }
             catch (JsonException jsonException)
             {
-                return new ResponseWithError<TResponseBody, TErrorBody>(jsonException);
+                return new Response<TResponseBody, TErrorBody>(jsonException);
             }
         }, handler);
     }

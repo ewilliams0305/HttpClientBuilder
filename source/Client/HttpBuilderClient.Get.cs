@@ -48,14 +48,14 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = context == null
@@ -63,20 +63,20 @@ internal sealed partial class HttpBuilderClient
                 : await DeserializeType<TSuccessType>(content, context, cancellationToken);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 
@@ -91,7 +91,7 @@ internal sealed partial class HttpBuilderClient
 
             if (content == null)
             {
-                return new ResponseWithError<TSuccessBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
+                return new Response<TSuccessBody, TErrorBody>(new EmptyBodyResponseException(response.StatusCode));
             }
 
             if (!response.IsSuccessStatusCode)
@@ -100,28 +100,28 @@ internal sealed partial class HttpBuilderClient
                     await DeserializeType<TErrorBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
                 return errorBody != null
-                    ? new ResponseWithError<TSuccessBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
-                    : new ResponseWithError<TSuccessBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                    ? new Response<TSuccessBody, TErrorBody>(response.StatusCode, response.Headers, errorBody)
+                    : new Response<TSuccessBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
             }
 
             var successBody =
                 await DeserializeType<TSuccessBody>(content, JsonSerializerOptions.Default, CancellationToken.None);
 
             return successBody != null
-                ? new ResponseWithError<TSuccessBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
-                : new ResponseWithError<TSuccessBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessBody, TErrorBody>(response.StatusCode, response.Headers, successBody)
+                : new Response<TSuccessBody, TErrorBody>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new ResponseWithError<TSuccessBody, TErrorBody>(argumentException);
+            return new Response<TSuccessBody, TErrorBody>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new ResponseWithError<TSuccessBody, TErrorBody>(requestException);
+            return new Response<TSuccessBody, TErrorBody>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new ResponseWithError<TSuccessBody, TErrorBody>(jsonException);
+            return new Response<TSuccessBody, TErrorBody>(jsonException);
         }
     }
 
@@ -136,26 +136,26 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var result = createResultFromContent.Invoke(response.StatusCode, response.Content);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(response.StatusCode, response.Headers, new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 
@@ -169,26 +169,26 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var result = await createResultFromContentAsync.Invoke(response.StatusCode, response.Content).ConfigureAwait(false);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(response.StatusCode, response.Headers, new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 
@@ -203,32 +203,32 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
             var result = createResultFromBytes.Invoke(response.StatusCode, content);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 
@@ -243,33 +243,33 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = await createResultFromBytesAsync.Invoke(response.StatusCode, content).ConfigureAwait(false);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 
@@ -284,33 +284,33 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = createResultFromStream.Invoke(response.StatusCode, content);
 
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(new DeserializedResponseException(response.StatusCode));
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 
@@ -325,33 +325,33 @@ internal sealed partial class HttpBuilderClient
 
             if (!response.IsSuccessStatusCode)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new HttpRequestResponseException(response.StatusCode));
             }
 
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)
             {
-                return new RequestResult<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
+                return new Response<TSuccessType>(response.StatusCode, response.Headers, new EmptyBodyResponseException(response.StatusCode));
             }
 
             var result = await createResultFromStreamAsync.Invoke(response.StatusCode, content);
             return result != null
-                ? new RequestResult<TSuccessType>(response.StatusCode, response.Headers, result!)
-                : new RequestResult<TSuccessType>(new DeserializedResponseException(response.StatusCode));
+                ? new Response<TSuccessType>(response.StatusCode, response.Headers, result!)
+                : new Response<TSuccessType>(new DeserializedResponseException(response.StatusCode));
 
         }
         catch (ArgumentException argumentException)
         {
-            return new RequestResult<TSuccessType>(argumentException);
+            return new Response<TSuccessType>(argumentException);
         }
         catch (HttpRequestException requestException)
         {
-            return new RequestResult<TSuccessType>(requestException);
+            return new Response<TSuccessType>(requestException);
         }
         catch (JsonException jsonException)
         {
-            return new RequestResult<TSuccessType>(jsonException);
+            return new Response<TSuccessType>(jsonException);
         }
     }
 

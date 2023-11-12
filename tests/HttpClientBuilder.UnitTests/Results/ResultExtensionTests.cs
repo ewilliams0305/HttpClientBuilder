@@ -11,7 +11,7 @@ namespace HttpClientBuilder.UnitTests.Results
         public void HandleResult_ProvidesValue_WhenSuccess()
         {
             // Arrange
-            var result = new RequestResult<WeatherForecast>(HttpStatusCode.OK, null, BogusWeatherData.GetForecast());
+            var result = new Response<WeatherForecast>(HttpStatusCode.OK, null, BogusWeatherData.GetForecast());
 
             // Act
             result.Handle(
@@ -32,7 +32,7 @@ namespace HttpClientBuilder.UnitTests.Results
         public void HandleResult_ProvidesException_WhenRequestFailed()
         {
             // Arrange
-            var result = new RequestResult<WeatherForecast>(HttpStatusCode.BadRequest, null, new NullReferenceException());
+            var result = new Response<WeatherForecast>(HttpStatusCode.BadRequest, null, new NullReferenceException());
 
             // Act
             result.Handle(
@@ -54,7 +54,7 @@ namespace HttpClientBuilder.UnitTests.Results
         public void HandleResult_ProvidesException_WhenRequestThrew()
         {
             // Arrange
-            var result = new RequestResult<WeatherForecast>(new NullReferenceException());
+            var result = new Response<WeatherForecast>(new NullReferenceException());
 
             // Act
             result.Handle(
@@ -76,7 +76,7 @@ namespace HttpClientBuilder.UnitTests.Results
         public void EnsureResult_InvokesPredicate_WhenSuccess()
         {
             // Arrange
-            var result = new RequestResult<WeatherForecast>(HttpStatusCode.OK, null, BogusWeatherData.GetForecast());
+            var result = new Response<WeatherForecast>(HttpStatusCode.OK, null, BogusWeatherData.GetForecast());
 
             // Act
             var predicateResult = result.Ensure(
@@ -96,7 +96,7 @@ namespace HttpClientBuilder.UnitTests.Results
         public void EnsureResult_FailsResult_WhenPredicateFailed()
         {
             // Arrange
-            var result = new RequestResult<WeatherForecast>(HttpStatusCode.OK, null, BogusWeatherData.GetForecast());
+            var result = new Response<WeatherForecast>(HttpStatusCode.OK, null, BogusWeatherData.GetForecast());
 
             // Act
             var predicateResult = result.Ensure(
