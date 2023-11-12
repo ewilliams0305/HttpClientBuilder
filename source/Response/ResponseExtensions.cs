@@ -157,5 +157,22 @@ namespace HttpClientBuilder
             value?.Invoke((HttpStatusCode)resultFromTask.StatusCode!, resultFromTask.Value!);
             return resultFromTask;
         }
+        
+        public static async Task<IResponse<TValue>> HandleAsync<TValue>(
+            this Task<IResponse<TValue>> response,
+            Func<HttpStatusCode, TValue, Task> valueAsync,
+            Func<Exception, Task> errorAsync) where TValue : class
+        {
+            var resultFromTask = await response;
+
+            if (!resultFromTask.Success)
+            {
+                error?.Invoke(resultFromTask.Error!);
+                return resultFromTask;
+            }
+
+            value?.Invoke((HttpStatusCode)resultFromTask.StatusCode!, resultFromTask.Value!);
+            return resultFromTask;
+        }
     }
 }

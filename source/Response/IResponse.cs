@@ -1,24 +1,12 @@
 using System;
-using System.Net;
 
 namespace HttpClientBuilder
 {
     /// <summary>
-    /// Provides the <seealso cref="HttpStatusCode"/> as a response from an <seealso cref="IHttpClient"/> request.
-    /// </summary>
-    public interface IResponseCode
-    {
-        /// <summary>
-        /// returns the <seealso cref="HttpStatusCode"/> as a response from an <seealso cref="IHttpClient"/> request.
-        /// </summary>
-        HttpStatusCode? StatusCode { get; }
-    }
-
-    /// <summary>
     /// Provides a success or fail returned from an <seealso cref="IHttpClient"/> request.
     /// The request will be successful when the exception is null.  
     /// </summary>
-    public interface IResponse : IResponseCode
+    public interface IResponse : IResponseCode, IResponseHeaders
     {
         /// <summary>
         /// The current state of the result object.

@@ -2,6 +2,7 @@
 
 using System;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace HttpClientBuilder
 {
@@ -11,6 +12,9 @@ namespace HttpClientBuilder
     public readonly struct Response: IResponse
     {
         #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public HttpResponseHeaders? Headers { get; }
 
         /// <inheritdoc />
         public ResponseState Status { get; }
@@ -34,10 +38,12 @@ namespace HttpClientBuilder
         /// Creates a new successful result.
         /// </summary>
         /// <param name="code">Http Status Code</param>
-        public Response(HttpStatusCode code)
+        /// <param name="headers">Http response headers returned from the server</param>
+        public Response(HttpStatusCode code, HttpResponseHeaders headers)
         {
             Status = ResponseState.Success;
             StatusCode = code;
+            Headers = headers;
             Error = null;
         }
 
@@ -49,6 +55,7 @@ namespace HttpClientBuilder
         {
             Status = ResponseState.Exception;
             StatusCode = null;
+            Headers = null;
             Error = error;
         }
 
@@ -61,6 +68,7 @@ namespace HttpClientBuilder
         {
             Status = ResponseState.HttpStatusError;
             StatusCode = code;
+            Headers = null;
             Error = error;
         }
 
@@ -68,7 +76,7 @@ namespace HttpClientBuilder
         public static implicit operator HttpStatusCode?(Response result) => result.StatusCode;
 
         public static implicit operator Response(Exception exception) => new (exception);
-        public static implicit operator Response?(HttpStatusCode code) => new (code);
+
     }
     
     /// <summary>
@@ -78,6 +86,9 @@ namespace HttpClientBuilder
     public readonly struct RequestResult<TSuccessValue> : IResponse<TSuccessValue> where TSuccessValue : class
     {
         #region Implementation of IResponseCode
+
+        /// <inheritdoc />
+        public HttpResponseHeaders? Headers { get; }
 
         /// <inheritdoc />
         public ResponseState Status { get; }
@@ -104,11 +115,13 @@ namespace HttpClientBuilder
         /// Creates a new successful result.
         /// </summary>
         /// <param name="code">Http Status Code</param>
+        /// <param name="headers">Http Response headers</param>
         /// <param name="value">Value Stored in the Result.</param>
-        public RequestResult(HttpStatusCode code, TSuccessValue value)
+        public RequestResult(HttpStatusCode code, HttpResponseHeaders headers, TSuccessValue value)
         {
             Status = ResponseState.Success;
             StatusCode = code;
+            Headers = headers;
             Value = value;
             Error = null;
         }
@@ -120,6 +133,7 @@ namespace HttpClientBuilder
         public RequestResult(Exception error)
         {
             Status = ResponseState.Exception;
+            Headers = null;
             StatusCode = null;
             Value = default;
             Error = error;
@@ -134,6 +148,7 @@ namespace HttpClientBuilder
         {
             Status = ResponseState.HttpStatusError;
             StatusCode = code;
+            Headers = null;
             Value = default;
             Error = error;
         }
@@ -141,8 +156,6 @@ namespace HttpClientBuilder
         public static implicit operator bool(RequestResult<TSuccessValue> result) => result.Success;
         public static implicit operator TSuccessValue?(RequestResult<TSuccessValue> result) => result.Value;
         public static implicit operator Exception?(RequestResult<TSuccessValue> result) => result.Error;
-
-        public static implicit operator RequestResult<TSuccessValue>(TSuccessValue value) => new(HttpStatusCode.OK, value);
         public static implicit operator RequestResult<TSuccessValue>(Exception exception) => new(exception);
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace HttpClientBuilder;
 
@@ -13,6 +14,9 @@ namespace HttpClientBuilder;
 public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponseWithError<TSuccessValue, TErrorValue> where TSuccessValue : class where TErrorValue : class
 {
     #region Implementation of IResponseCode
+
+    /// <inheritdoc />
+    public HttpResponseHeaders? Headers { get; }
 
     /// <inheritdoc />
     public ResponseState Status { get; }
@@ -46,11 +50,13 @@ public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse
     /// Creates a new successful result.
     /// </summary>
     /// <param name="code">Http Status Code</param>
+    /// <param name="headers"></param>
     /// <param name="value">Value Stored in the Result.</param>
-    public ResponseWithError(HttpStatusCode code, TSuccessValue value)
+    public ResponseWithError(HttpStatusCode code, HttpResponseHeaders headers,  TSuccessValue value)
     {
         Status = ResponseState.Success;
         StatusCode = code;
+        Headers = headers;
         Value = value;
         ErrorValue = default;
         Error = null;
@@ -65,6 +71,7 @@ public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse
     {
         Status = ResponseState.HttpStatusError;
         StatusCode = code;
+        Headers = null;
         Value = default;
         ErrorValue = errorValue;
         Error = null;
@@ -78,6 +85,7 @@ public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse
     {
         Status = ResponseState.Exception;
         StatusCode = null;
+        Headers = null;
         Value = default;
         ErrorValue = default;
         Error = error;
@@ -87,8 +95,6 @@ public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse
     public static implicit operator TSuccessValue?(ResponseWithError<TSuccessValue, TErrorValue> result) => result.Value;
     public static implicit operator TErrorValue?(ResponseWithError<TSuccessValue, TErrorValue> result) => result.ErrorValue;
     public static implicit operator Exception?(ResponseWithError<TSuccessValue, TErrorValue> result) => result.Error;
-
-    public static implicit operator ResponseWithError<TSuccessValue, TErrorValue>(TSuccessValue value) => new(HttpStatusCode.OK, value);
     public static implicit operator ResponseWithError<TSuccessValue, TErrorValue>(TErrorValue value) => new(HttpStatusCode.BadRequest, value);
     public static implicit operator ResponseWithError<TSuccessValue, TErrorValue>(Exception exception) => new(exception);
 }

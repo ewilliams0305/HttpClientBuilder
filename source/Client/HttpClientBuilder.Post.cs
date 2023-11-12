@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HttpClientBuilder.Client
+namespace HttpClientBuilder;
+
+internal sealed partial class HttpBuilderClient
 {
-    internal class HttpClientBuilder
-    {
-    }
 }

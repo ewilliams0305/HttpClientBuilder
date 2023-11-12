@@ -34,7 +34,7 @@ namespace HttpClientBuilder
     /// A request handler that accepts a precomputed parsed body.
     /// </summary>
     /// <typeparam name="TResponseBody">Type of object to convert the body or the content too.</typeparam>
-    public interface IRequestHandler<in TResponseBody> where T : class
+    public interface IRequestHandler<in TResponseBody> where TResponseBody : class
     {
         /// <summary>
         /// Handles a response from a server with a precomputed body Type.
@@ -61,7 +61,7 @@ namespace HttpClientBuilder
     /// </summary>
     /// <typeparam name="TResponseBody">Type of object to convert the body or the content too.</typeparam>
     /// <typeparam name="TResponseError">Type of object parsed when the code is a failure.</typeparam>
-    public interface IRequestHandler<in TResponseBody, in TResponseError> where T : class
+    public interface IRequestHandler<in TResponseBody, in TResponseError> where TResponseBody : class
     {
         /// <summary>
         /// Handles a response from a server with a precomputed body Type.
@@ -104,7 +104,9 @@ namespace HttpClientBuilder
     /// </summary>
     /// <typeparam name="TResponseBody"></typeparam>
     /// <seealso cref="IRequestHandler"/>
-    public interface IDisposableRequestHandler<in TResponseBody> : IRequestHandler<TResponseBody>, IDisposable
+    public interface IDisposableRequestHandler<in TResponseBody> : 
+        IRequestHandler<TResponseBody>, IDisposable 
+        where TResponseBody : class
     {
     }
 
@@ -114,7 +116,10 @@ namespace HttpClientBuilder
     /// <typeparam name="TResponseBody"></typeparam>
     /// <typeparam name="TResponseError"></typeparam>
     /// <seealso cref="IRequestHandler"/>
-    public interface IDisposableRequestHandler<in TResponseBody, in TResponseError> : IRequestHandler<TResponseBody, TResponseError>, IDisposable
+    public interface IDisposableRequestHandler<in TResponseBody, in TResponseError> : 
+        IRequestHandler<TResponseBody, TResponseError>, IDisposable 
+        where TResponseBody : class 
+        where TResponseError : class
     {
     }
 }
