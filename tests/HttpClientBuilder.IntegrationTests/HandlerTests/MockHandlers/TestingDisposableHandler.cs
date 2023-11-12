@@ -11,7 +11,7 @@ public class TestingDisposableHandler : IDisposableRequestHandler
     #region Implementation of IRequestHandler
 
     /// <inheritdoc />
-    public Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content)
+    public Task HandleRequest(HttpStatusCode code, HttpContent content)
     {
         Code = (int)code;
         return Task.CompletedTask;

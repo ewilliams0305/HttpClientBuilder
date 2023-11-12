@@ -15,10 +15,9 @@ namespace HttpClientBuilder
         /// Handles a response with no content processing.  Data will be dispatched as it was received from the server.
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="headers"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content);
+        Task HandleRequest(HttpStatusCode code, HttpContent content);
     }
 
     /// <summary>

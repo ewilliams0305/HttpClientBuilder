@@ -27,7 +27,7 @@ internal class DispatchHandlerWithoutBody : IDispatchHandler
 
         if (response != null)
         {
-            await _handler.HandleRequest(response.StatusCode, response.Headers, response.Content);
+            await _handler.HandleRequest(response.StatusCode, response.Content);
         }
     }
 
@@ -64,7 +64,7 @@ internal class DispatchHandlerWithBody : IDispatchHandler
 
         if (response != null)
         {
-            await _handler.HandleRequest(response.StatusCode, response.Headers, response.Content);
+            await _handler.HandleRequest(response.StatusCode, response.Content);
         }
     }
 
