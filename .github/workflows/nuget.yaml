@@ -55,8 +55,8 @@ jobs:
     - name: Test
       run: dotnet test source/ClientBuilder.sln --configuration Release /p:Version=${VERSION} --no-build
     - name: Pack
-      run: dotnet pack source/ClientBuilder.sln --configuration Release /p:Version=${VERSION} --no-build --output .
+      run: dotnet pack source/ClientBuilder.sln --configuration Release /p:Version=${VERSION} --no-build --output ./artifacts
     - name: Push
-      run: dotnet nuget push HttpClientBuilder.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${NUGET_API_KEY}
+      run: dotnet nuget push ./artifacts/*{VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${NUGET_API_KEY}
       env:
         GITHUB_TOKEN: ${{ secrets.NUGET_API_KEY }}
