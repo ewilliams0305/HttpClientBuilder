@@ -1,7 +1,7 @@
 ﻿# This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: Build and Test 🧪🔬👩‍🔬
+name: Deploy NUGET 🚀👩‍🚀
 
 #on:
 #  push:
@@ -57,6 +57,6 @@ jobs:
     - name: Pack
       run: dotnet pack source/ClientBuilder.sln --configuration Release /p:Version=${VERSION} --no-build --output .
     - name: Push
-      run: dotnet nuget push NuGet.Workflow.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${NUGET_API_KEY}
+      run: dotnet nuget push HttpClientBuilder.${VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${secrets.NUGET_API_KEY}
       env:
         GITHUB_TOKEN: ${{ secrets.NUGET_API_KEY }}
