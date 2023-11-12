@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HttpClientBuilder.Server.Endpoints;
 
-public static class PostRequestEndpoints
+public static class PutRequestEndpoints
 {
-    public static WebApplication MapPostEndpoints(this WebApplication app)
+    public static WebApplication MapPutEndpoints(this WebApplication app)
     {
-        app.MapPost("/", ([FromBody]WeatherForecast? forecast) =>
+        app.MapPut("/", ([FromBody]WeatherForecast? forecast) =>
             
             forecast ?? new WeatherForecast
             (
@@ -16,7 +16,7 @@ public static class PostRequestEndpoints
                 Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
             ));
 
-        app.MapPost("/api", ([FromBody] WeatherForecast? forecast) => 
+        app.MapPut("/api", ([FromBody] WeatherForecast? forecast) => 
             forecast?? new WeatherForecast
         (
             DateTime.Now.AddDays(1),
@@ -24,7 +24,7 @@ public static class PostRequestEndpoints
             Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
         ));
 
-        app.MapPost("/api/weather/error", ([FromQuery] bool error) =>
+        app.MapPut("/api/weather/error", ([FromQuery] bool error) =>
         {
             return error
                 ? Results.BadRequest(new ErrorResponse(DateTime.Now, "Request was  a failure", 400,
@@ -37,12 +37,12 @@ public static class PostRequestEndpoints
                 ));
         });
 
-        app.MapPost("/api/weather/exception", ([FromQuery] bool error) =>
+        app.MapPut("/api/weather/exception", ([FromQuery] bool error) =>
         {
             throw new Exception();
         });
 
-        app.MapPost("/api/weatherforecast", () =>
+        app.MapPut("/api/weatherforecast", () =>
         {
             var forecast = Enumerable.Range(1, 5).Select(index =>
                     new WeatherForecast

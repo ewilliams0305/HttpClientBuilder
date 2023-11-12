@@ -1,30 +1,28 @@
 using HttpClientBuilder.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace HttpClientBuilder.Server.Endpoints;
 
-public static class PostRequestEndpoints
+public static class DeleteRequestEndpoints
 {
-    public static WebApplication MapPostEndpoints(this WebApplication app)
+    public static WebApplication MapDeleteEndpoints(this WebApplication app)
     {
-        app.MapPost("/", ([FromBody]WeatherForecast? forecast) =>
-            
-            forecast ?? new WeatherForecast
-            (
-                DateTime.Now.AddDays(1),
-                Random.Shared.Next(-20, 55),
-                Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
-            ));
-
-        app.MapPost("/api", ([FromBody] WeatherForecast? forecast) => 
-            forecast?? new WeatherForecast
+        app.MapDelete("/", () => new WeatherForecast
         (
             DateTime.Now.AddDays(1),
             Random.Shared.Next(-20, 55),
             Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
         ));
 
-        app.MapPost("/api/weather/error", ([FromQuery] bool error) =>
+        app.MapDelete("/api", () => new WeatherForecast
+        (
+            DateTime.Now.AddDays(1),
+            Random.Shared.Next(-20, 55),
+            Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
+        ));
+
+        app.MapDelete("/api/weather/error", ([FromQuery] bool error) =>
         {
             return error
                 ? Results.BadRequest(new ErrorResponse(DateTime.Now, "Request was  a failure", 400,
@@ -37,12 +35,12 @@ public static class PostRequestEndpoints
                 ));
         });
 
-        app.MapPost("/api/weather/exception", ([FromQuery] bool error) =>
+        app.MapDelete("/api/weather/exception", ([FromQuery] bool error) =>
         {
             throw new Exception();
         });
 
-        app.MapPost("/api/weatherforecast", () =>
+        app.MapDelete("/api/weatherforecast", () =>
         {
             var forecast = Enumerable.Range(1, 5).Select(index =>
                     new WeatherForecast

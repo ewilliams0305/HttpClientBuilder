@@ -20,6 +20,9 @@ app.UseHttpsRedirection();
 
 app.MapGetEndpoints();
 app.MapPostEndpoints();
+app.MapPutEndpoints();
+app.MapDeleteEndpoints();
 app.MapErrorEndpoints();
+app.MapStatusEndpoints();
 
 app.Run();

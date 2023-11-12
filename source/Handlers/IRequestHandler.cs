@@ -19,15 +19,6 @@ namespace HttpClientBuilder
         /// <param name="content"></param>
         /// <returns></returns>
         Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content);
-
-        /// <summary>
-        /// Handles a response with content processing.
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="headers"></param>
-        /// <param name="body"></param>
-        /// <returns></returns>
-        Task HandleRequest<TValue>(HttpStatusCode code, HttpResponseHeaders headers, TValue body);
     }
 
     /// <summary>
