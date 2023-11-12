@@ -101,7 +101,7 @@ internal class DispatchHandlerWithoutBody<TResponseBody> : IDispatchHandler
     public async Task DispatchAsync(HttpContent? body = null) => 
         await _requestFunc.Invoke(_path)
             .HandleAsync(
-                valueAsync: async (code, responseBody) => await _handler.HandleBody(code, null, responseBody),
+                valueAsync: async (code, headers, responseBody) => await _handler.HandleBody(code, headers, responseBody),
                 errorAsync: async (exception) => await _handler.HandleException(exception));
 
     /// <inheritdoc />

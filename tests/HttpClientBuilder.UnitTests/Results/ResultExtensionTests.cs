@@ -15,7 +15,7 @@ namespace HttpClientBuilder.UnitTests.Results
 
             // Act
             result.Handle(
-                value: (code, forecast) =>
+                value: (code, headers, forecast) =>
                 {
                     // Assert
                     code.Should().Be(HttpStatusCode.OK);
@@ -36,7 +36,7 @@ namespace HttpClientBuilder.UnitTests.Results
 
             // Act
             result.Handle(
-                value: (code, forecast) =>
+                value: (code, headers, forecast) =>
                 {
                     // Assert
                     code.Should().Be(HttpStatusCode.BadRequest);
@@ -58,7 +58,7 @@ namespace HttpClientBuilder.UnitTests.Results
 
             // Act
             result.Handle(
-                value: (code, forecast) =>
+                value: (code, headers, forecast) =>
                 {
                     // Assert
                     code.Should().Be(null);
