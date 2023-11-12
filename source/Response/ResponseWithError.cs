@@ -7,11 +7,11 @@ namespace HttpClientBuilder;
 #pragma warning disable CS1591
 
 /// <summary>
-/// The default implementation of the <seealso cref="IResponseWithError{TSuccessValue,TErrorValue}"/>
+/// The default implementation of the <seealso cref="IResponse{TSuccessValue,TErrorValue}"/>
 /// </summary>
 /// <typeparam name="TSuccessValue">Type of object stored in the response.</typeparam>
 /// <typeparam name="TErrorValue">Type of object stored when the request returned a 400 or greater.</typeparam>
-public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponseWithError<TSuccessValue, TErrorValue> where TSuccessValue : class where TErrorValue : class
+public readonly struct ResponseWithError<TSuccessValue, TErrorValue> : IResponse<TSuccessValue, TErrorValue> where TSuccessValue : class where TErrorValue : class
 {
     #region Implementation of IResponseCode
 

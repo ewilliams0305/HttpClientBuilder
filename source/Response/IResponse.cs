@@ -43,7 +43,7 @@ namespace HttpClientBuilder
     /// </summary>
     /// <typeparam name="TSuccessValue">Type of happy path object</typeparam>
     /// <typeparam name="TErrorValue">Type of failure path object</typeparam>
-    public interface IResponseWithError<out TSuccessValue, out TErrorValue> : IResponse<TSuccessValue> 
+    public interface IResponse<out TSuccessValue, out TErrorValue> : IResponse<TSuccessValue> 
         where TSuccessValue : class 
         where TErrorValue : class
     {

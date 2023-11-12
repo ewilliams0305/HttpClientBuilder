@@ -271,5 +271,40 @@ namespace HttpClientBuilder
                 return new RequestResult<TValue>(e);
             }
         }
+        
+        public static async Task<IResponse<TValue>> HandleAsync<TValue, TError>(
+            this Task<IResponse<TValue, TError>> response,
+            Func<HttpStatusCode, HttpResponseHeaders, TValue, Task> valueAsync,
+            Func<HttpStatusCode, HttpResponseHeaders, TError, Task> errorAsync,
+            Func<Exception, Task> exceptionAsync) 
+            where TValue : class
+            where TError : class
+        {
+            var resultFromTask = await response;
+
+            try
+            {
+                switch (resultFromTask.Status)
+                {
+                    case ResponseState.Success:
+                        await valueAsync.Invoke((HttpStatusCode)resultFromTask.StatusCode!, resultFromTask.Headers!, resultFromTask.Value!);
+                        break;
+                    case ResponseState.HttpStatusError:
+                        await errorAsync.Invoke((HttpStatusCode)resultFromTask.StatusCode!, resultFromTask.Headers!, resultFromTask.ErrorValue!);
+                        break;
+                    case ResponseState.Exception:
+                        await exceptionAsync.Invoke(resultFromTask.Error!);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return resultFromTask;
+            }
+            catch (Exception e)
+            {
+                return new RequestResult<TValue>(e);
+            }
+        }
     }
 }
