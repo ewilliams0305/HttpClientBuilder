@@ -5,14 +5,14 @@ using HttpClientBuilder.IntegrationTests.ApplicationFactory;
 namespace HttpClientBuilder.IntegrationTests.GetRequestTests;
 
 [Collection(Definitions.WebApiCollection)]
-public class GetUrlTests
+public class GetPrefixedUrlTests
 {
     private readonly IHttpClient _client;
         
-    public GetUrlTests(AppFactory factory)
+    public GetPrefixedUrlTests(AppFactory factory)
     {
         // Arrange
-        _client = factory.GetDefaultClient();
+        _client = factory.GetPrefixedClient();
     }
 
     [Fact]
@@ -21,7 +21,7 @@ public class GetUrlTests
         // Arrange
 
         // Act
-        var result = await _client.GetAsync("/api/weatherForecast");
+        var result = await _client.GetAsync("/weatherForecast");
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -33,7 +33,7 @@ public class GetUrlTests
         // Arrange
 
         // Act
-        var result = await _client.GetAsync("api/weatherForecast/");
+        var result = await _client.GetAsync("weatherForecast/");
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -45,7 +45,7 @@ public class GetUrlTests
         // Arrange
 
         // Act
-        var result = await _client.GetAsync("/api/weatherForecast/");
+        var result = await _client.GetAsync("/weatherForecast/");
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.OK);

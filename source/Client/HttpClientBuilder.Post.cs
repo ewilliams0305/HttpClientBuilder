@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -36,15 +37,13 @@ internal sealed partial class HttpBuilderClient
     public async Task<IResponse> PostAsync<TRequestBody>(string route = "", TRequestBody? body = default,
         CancellationToken cancellationToken = default) where TRequestBody : class
     {
-        if (body == null)
-        {
-            return new Response(new Exception("The content body is Null"));
-        }
 
         try
         {
-            var json = JsonSerializer.Serialize<TRequestBody>(body!);
-            var response = await _client.PostAsync(RemoveSlashes(route), new StringContent(json), cancellationToken).ConfigureAwait(false);
+            var contentBody = body != null
+                ? new StringContent(JsonSerializer.Serialize<TRequestBody>(body!), Encoding.UTF8, "application/json")
+                : null;
+            var response = await _client.PostAsync(RemoveSlashes(route), contentBody, cancellationToken).ConfigureAwait(false);
 
             return !response.IsSuccessStatusCode
                 ? new Response(response.StatusCode, new HttpRequestResponseException(response.StatusCode))
@@ -106,18 +105,16 @@ internal sealed partial class HttpBuilderClient
 
     /// <inheritdoc />
     public async Task<IResponse<TSuccessType>> PostContentFromJsonAsync<TSuccessType, TRequestBody>(string route = "",
-        TRequestBody? body = default(TRequestBody?), JsonSerializerContext? context = null,
+        TRequestBody? body = default, JsonSerializerContext? context = null,
         CancellationToken cancellationToken = default) where TSuccessType : class where TRequestBody : class
     {
-        if (body == null)
-        {
-            return new Response<TSuccessType>(new Exception("The content body is Null"));
-        }
-
         try
         {
-            var json = JsonSerializer.Serialize<TRequestBody>(body!);
-            var response = await _client.PostAsync(RemoveSlashes(route), new StringContent(json), cancellationToken).ConfigureAwait(false);
+            var contentBody = body != null
+                ? new StringContent(JsonSerializer.Serialize<TRequestBody>(body!), Encoding.UTF8, "application/json")
+                : null;
+
+            var response = await _client.PostAsync(RemoveSlashes(route), contentBody, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -200,15 +197,15 @@ internal sealed partial class HttpBuilderClient
     /// <inheritdoc />
     public async Task<IResponse<TSuccessBody, TErrorBody>> PostContentFromJsonAsync<TSuccessBody, TErrorBody, TRequestBody>(string route = "", TRequestBody? body = default, CancellationToken cancellationToken = default) where TSuccessBody : class where TErrorBody : class where TRequestBody : class
     {
-        if (body == null)
-        {
-            return new Response<TSuccessBody, TErrorBody>(new Exception("The content body is Null"));
-        }
-
         try
         {
-            var json = JsonSerializer.Serialize<TRequestBody>(body!);
-            var response = await _client.PostAsync(RemoveSlashes(route), new StringContent(json), cancellationToken).ConfigureAwait(false);
+            var contentBody = body != null
+                ? new StringContent(JsonSerializer.Serialize<TRequestBody>(body!), Encoding.UTF8, "application/json")
+                : null;
+
+            var response = await _client.PostAsync(RemoveSlashes(route), contentBody, cancellationToken).ConfigureAwait(false);
+
+            var strings = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var content = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
             if (content == null)

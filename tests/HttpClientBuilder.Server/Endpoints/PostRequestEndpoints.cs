@@ -16,13 +16,23 @@ public static class PostRequestEndpoints
                 Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
             ));
 
-        app.MapPost("/api", ([FromBody] WeatherForecast? forecast) => 
-            forecast?? new WeatherForecast
-        (
-            DateTime.Now.AddDays(1),
-            Random.Shared.Next(-20, 55),
-            Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
-        ));
+        app.MapPost("/api", ([FromBody] WeatherForecast? forecast) =>
+        {
+            var result = forecast ?? new WeatherForecast
+            (
+                DateTime.Now.AddDays(1),
+                Random.Shared.Next(-20, 55),
+                Summaries.Values[Random.Shared.Next(Summaries.Values.Length)]
+            );
+
+            return Results.Ok(result);
+        });
+        
+        app.MapPost("/api/echo", ([FromBody] Echo echo) =>
+        {
+            return Results.Ok(echo);
+        });
+            
 
         app.MapPost("/api/weather/error", ([FromQuery] bool error) =>
         {
