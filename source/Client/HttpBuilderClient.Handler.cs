@@ -1,7 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HttpClientBuilder;
 
@@ -353,6 +358,26 @@ internal sealed partial class HttpBuilderClient
             }
         }, handler);
     }
+
+    #endregion
+
+    #region FUNCTIONAL HANDLERS
+
+    /// <inheritdoc />
+    public IDispatchHandler CreateGetHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+        new DispatchFunctionWithoutBody(path, _client.GetAsync, handler);
+
+    /// <inheritdoc />
+    public IDispatchHandler CreatePostHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+        new DispatchFunctionWithBody(path, _client.PostAsync, handler);
+
+    /// <inheritdoc />
+    public IDispatchHandler CreatePutHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+        new DispatchFunctionWithBody(path, _client.PostAsync, handler);
+
+    /// <inheritdoc />
+    public IDispatchHandler CreateDeleteHandler(string path, Func<HttpStatusCode, HttpResponseHeaders, HttpContent, Task> handler) =>
+        new DispatchFunctionWithoutBody(path, _client.DeleteAsync, handler);
 
     #endregion
 }
