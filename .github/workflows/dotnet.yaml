@@ -35,8 +35,8 @@ jobs:
 
     - name: Build and Pack
       run: |
-        dotnet build -c Release
-        dotnet pack -c Release --no-build -o ./artifacts
+        dotnet build source/ClientBuilder.sln -c Release
+        dotnet pack source/ClientBuilder.sln -c Release --no-build -o ./artifacts
 
     - name: Publish NuGet Package
       uses: nuget/publish@v2
