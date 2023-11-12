@@ -51,12 +51,12 @@ jobs:
     - name: Set VERSION variable from tag
       run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
     - name: Build
-      run: dotnet build source/ClientBuilder.sln --configuration Release /p:Version=${VERSION}
+      run: dotnet build source/HttpClientBuilder.csproj --configuration Release /p:Version=${VERSION}
     - name: Test
-      run: dotnet test source/ClientBuilder.sln --configuration Release /p:Version=${VERSION} --no-build
+      run: dotnet test source/HttpClientBuilder.csproj --configuration Release /p:Version=${VERSION} --no-build
     - name: Pack
-      run: dotnet pack source/ClientBuilder.sln --configuration Release /p:Version=${VERSION} --no-build --output ./artifacts
+      run: dotnet pack source/HttpClientBuilder.csproj --configuration Release /p:Version=${VERSION} --no-build --output ./artifacts
     - name: Push
-      run: dotnet nuget push ./artifacts/*{VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${NUGET_API_KEY}
+      run: dotnet nuget push ./artifacts/*{VERSION}.nupkg --source https://nuget.pkg.github.com/acraven/index.json --api-key ${secrets.NUGET_API_KEY}
       env:
         GITHUB_TOKEN: ${{ secrets.NUGET_API_KEY }}
