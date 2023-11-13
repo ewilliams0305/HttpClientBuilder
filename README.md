@@ -130,6 +130,7 @@ seperation of concerns. Here our client code reads more like server code, we cre
 and point them at handlers.  There are teo main types of handlers: pre-processed and post-processed.  
 
 ### Creating Handlers
+Handler without any processing. 
 ```csharp
 public class WeatherForecastHandler : IRequestHandler
 {
@@ -139,12 +140,38 @@ public class WeatherForecastHandler : IRequestHandler
     }
 }
 ```
+Handle with a single generic argument to specify a contrnt body object 
 ```csharp
-public class WeatherForecastHandler : IRequestHandler<TContent>
+public class WeatherForecastHandler : IRequestHandler<WeatherForecast>
 {
-    public async Task HandleRequest(HttpStatusCode code, TContent content)
+    public Task HandleBody(HttpStatusCode code, HttpResponseHeaders headers, WeatherForecast content)
     {
-        // Called when no post request processing is required.
+        // Invoked when a successful response is properly deserialized as the specified type
+    }
+
+    public Task HandleException(Exception exception)
+    {
+        // Invoked when an error is encountered. 
+    }
+}
+```
+Handler with an addtional T Parameter to specify a Error Type returned from Bad requests. 
+```csharp
+public class WeatherForecastHandler : IRequestHandler<WeatherForecast, ErrorResponse>
+{
+    public Task HandleBody(HttpStatusCode code, HttpResponseHeaders headers, WeatherForecast content)
+    {
+        // Invoked when a successful response is properly deserialized as the specified type
+    }
+
+    public Task HandleError(HttpStatusCode code, ErrorResponse error)
+    {
+        // Incoked when an error code is recoeved and content is deserialized as the specifed type
+    }
+
+    public Task HandleException(Exception exception)
+    {
+        // Invoked when an error is encountered. 
     }
 }
 ```
