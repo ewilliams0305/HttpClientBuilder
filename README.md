@@ -229,6 +229,18 @@ await getUglyDWeather.DispatchAsync();
 
 // Your IDispatch instance will now be disposed
 ```
+### Handler Callbacks
+An alternative to using `IRequestHandler` interfaces are delegates. you can provide an
+function to handle the data as its returned from the server. 
+```csharp
+var dispatch = _client.CreateGetHandler($"status/{code}",  (statusCode, content) =>
+{
+    result = (int)statusCode;
+    return Task.CompletedTask;
+});
+await dispatch.DispatchAsync();
+```
+
 
 # Request Methods
 
