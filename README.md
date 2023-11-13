@@ -127,23 +127,28 @@ results of a specific HTTP
 the handlers API request are initially configured and later invoked as needed. This aims to reduce
 boiler plate code, prevent the need for simple methods that wrap HTTP requests, and help with 
 seperation of concerns. Here our client code reads more like server code, we create requests 
-and point them at handlers.   
+and point them at handlers.  There are teo main types of handlers: pre-processed and post-processed.  
 
 ### Creating Handlers
 ```csharp
 public class WeatherForecastHandler : IRequestHandler
 {
-    public async Task HandleRequest(HttpStatusCode code, HttpResponseHeaders headers, HttpContent content)
+    public async Task HandleRequest(HttpStatusCode code, HttpContent content)
     {
         // Called when no post request processing is required.
     }
-
-    public async Task HandleRequest<TValue>(HttpStatusCode code, HttpResponseHeaders headers, TValue body)
+}
+```
+```csharp
+public class WeatherForecastHandler : IRequestHandler<TContent>
+{
+    public async Task HandleRequest(HttpStatusCode code, TContent content)
     {
-        // Called when post request body processing is required.
+        // Called when no post request processing is required.
     }
 }
 ```
+
 ### Creating Dispatchers
 Create a `IHttpClient` using the `IClientBuilder` as described [above](#Building). 
 ```csharp
